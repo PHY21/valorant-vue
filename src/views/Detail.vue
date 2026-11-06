@@ -1,11 +1,12 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { ArrowLeft, Heart, GitCompareArrows, Trash2 } from "lucide-vue-next";
+import { ArrowLeft, Heart, GitCompareArrows } from "lucide-vue-next";
 import { useCatalog } from "../stores/catalog";
 import { compareStats, number, catalogRows } from "../lib/domain";
 import Portrait from "../components/Portrait.vue";
 import PlayerCard from "../components/PlayerCard.vue";
+import Comments from "../components/Comments.vue";
 const s = useCatalog(),
   route = useRoute();
 const kind = computed(() => route.params.kind),
@@ -39,32 +40,6 @@ const placements = computed(() =>
   ),
 );
 const target = computed(() => `${kind.value}:${id.value}`);
-const comments = computed(() =>
-  s.comments.filter((c) => c.target === target.value),
-);
-const name = ref(""),
-  text = ref(""),
-  rating = ref(5),
-  message = ref("");
-watch(target, () => {
-  text.value = "";
-  message.value = "";
-  rating.value = 5;
-});
-function submit() {
-  if (!name.value.trim() || !text.value.trim()) {
-    message.value = "请填写昵称和评价内容。";
-    return;
-  }
-  s.addComment({
-    target: target.value,
-    name: name.value.trim().slice(0, 24),
-    text: text.value.trim().slice(0, 500),
-    rating: Number(rating.value),
-  });
-  text.value = "";
-  message.value = "已保存到当前浏览器。";
-}
 </script>
 <template>
   <RouterLink :to="'/explore/' + kind" class="back-link"
@@ -231,64 +206,8 @@ function submit() {
       </div>
       <p v-else class="notice">暂无参赛记录。</p>
     </section>
-    <section v-if="kind !== 'agent'" class="panel comments-panel">
-      <span class="eyebrow">YOUR TAKE</span>
-      <h2>留下你的看法</h2>
-      <p class="method-note">
-        本地交互演示：评价仅保存在当前浏览器，不会发布到服务器，也不会被其他访客看到。
-      </p>
-      <form @submit.prevent="submit">
-        <div class="form-row">
-          <label
-            >昵称<input
-              v-model="name"
-              maxlength="24"
-              required
-              placeholder="如何称呼你"
-              autocomplete="nickname" /></label
-          ><label
-            >评分<select v-model="rating">
-              <option v-for="n in 5" :value="n">
-                {{ "★".repeat(n) }} · {{ n }} 分
-              </option>
-            </select></label
-          >
-        </div>
-        <label
-          >评价<textarea
-            v-model="text"
-            maxlength="500"
-            required
-            rows="3"
-            placeholder="聊聊你欣赏的表现…"
-          ></textarea>
-        </label>
-        <div class="comment-submit">
-          <span class="caption">{{ text.length }} / 500</span
-          ><button class="btn" type="submit">保存本地评价 ↗</button>
-        </div>
-        <p role="status" class="caption">{{ message }}</p>
-      </form>
-      <div v-for="c in comments" :key="c.id" class="comment">
-        <div>
-          <strong>{{ c.name }}</strong
-          ><span class="rating-stars">{{ "★".repeat(c.rating) }}</span
-          ><span class="caption">{{
-            new Date(c.date).toLocaleDateString("zh-CN")
-          }}</span
-          ><button
-            class="icon-btn"
-            :aria-label="'删除 ' + c.name + ' 的本地评价'"
-            @click="s.removeComment(c.id)"
-          >
-            <Trash2 :size="15" />
-          </button>
-        </div>
-        <p>{{ c.text }}</p>
-      </div>
-      <p v-if="!comments.length" class="caption">这里还没有本地评价。</p>
-    </section></template
-  >
+    <Comments v-if="kind !== 'agent'" :key="target" :target="target"
+  /></template>
   <div v-else class="empty">
     <h1>没有找到这份档案</h1>
     <p>链接可能已失效，请回到图鉴重新选择。</p>

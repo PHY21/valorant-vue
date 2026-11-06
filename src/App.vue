@@ -14,8 +14,11 @@ import {
   Menu,
   X,
   Info,
+  UserRound,
 } from "lucide-vue-next";
 import { useCatalog } from "./stores/catalog";
+import { useAuth } from "./stores/auth.js";
+const auth = useAuth();
 function focusMain() {
   const el = document.getElementById("main");
   el?.focus();
@@ -86,6 +89,16 @@ onMounted(store.load);
       <RouterLink to="/about"
         ><Info :size="17" />关于这个项目<ArrowUpRight :size="16"
       /></RouterLink>
+      <RouterLink
+        :to="
+          auth.user
+            ? '/account'
+            : { path: '/login', query: { returnTo: route.fullPath } }
+        "
+        ><UserRound :size="17" />{{
+          auth.user ? "我的账号" : "登录 / 注册"
+        }}</RouterLink
+      >
       <div class="edition">
         <span class="status-dot"></span> COURSE DATA / DEMO<small
           >Built with Vue 3 · Designed to explore</small
@@ -98,9 +111,17 @@ onMounted(store.load);
       <div>
         <span class="muted">探索游戏背后的</span> <strong>每一份实力</strong>
       </div>
-      <RouterLink to="/about" class="top-link"
-        >项目说明 <ArrowUpRight :size="15"
-      /></RouterLink>
+      <RouterLink
+        :to="
+          auth.user
+            ? '/account'
+            : { path: '/login', query: { returnTo: route.fullPath } }
+        "
+        class="top-link account-nav"
+        ><UserRound :size="16" /><span>{{
+          auth.user ? auth.displayName : "登录 / 注册"
+        }}</span></RouterLink
+      >
     </div>
     <main id="main" tabindex="-1">
       <div v-if="store.loading" class="loading-state">

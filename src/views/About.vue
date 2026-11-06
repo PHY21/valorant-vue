@@ -13,7 +13,7 @@ import PageHeading from "../components/PageHeading.vue";
       <h2>可探索，也可讲清楚</h2>
       <p>
         Vue 3 Composition API 组织页面逻辑，Vue Router 管理详情与筛选路由，Pinia
-        管理数据和本地收藏、评价状态。Vite 构建静态站点，页面按路由加载。
+        管理数据、登录状态和本地收藏。Vite 构建静态站点，页面按路由加载。
       </p>
       <div class="tech-tags">
         <span
@@ -39,10 +39,12 @@ import PageHeading from "../components/PageHeading.vue";
     </section>
     <section class="panel">
       <span class="eyebrow">03 / INTERACTION</span>
-      <h2>真实交互，本地保存</h2>
+      <h2>在线账号，公开交流</h2>
       <p>
-        搜索、筛选、对比和排行榜直接基于收录数据计算。收藏和评价只保存在当前浏览器的
-        localStorage；不提供真实在线注册和跨设备同步，清除浏览器数据会移除这些记录。
+        搜索、筛选、对比和排行榜基于收录数据计算。账号与公开评价使用 Supabase
+        服务，配置完成后可跨设备登录；账号入口会显示服务是否可用。
+        收藏和升级前的旧评价仍仅保存在当前浏览器，清除浏览器数据会移除这些本地记录。原
+        PHP 账号不迁移，请另行注册。
       </p>
     </section>
     <section class="panel">

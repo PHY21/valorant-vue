@@ -3,6 +3,22 @@ import { createPinia } from "pinia";
 import { createRouter, createWebHashHistory } from "vue-router";
 import App from "./App.vue";
 import "./style.css";
+import { useAuth } from "./stores/auth.js";
+const pinia = createPinia();
+const auth = useAuth(pinia);
+// Supabase consumes its URL fragment before the hash router can rewrite it.
+const authCallback = /^#(?:access_token=|error=|error_code=)/.test(
+  window.location.hash,
+);
+const restored = auth.initialize();
+if (authCallback) {
+  await restored;
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${window.location.search}#/account`,
+  );
+}
 const router = createRouter({
   history: createWebHashHistory(),
   scrollBehavior: () => ({ top: 0 }),
@@ -17,6 +33,9 @@ const router = createRouter({
     { path: "/compare", component: () => import("./views/Compare.vue") },
     { path: "/favorites", component: () => import("./views/Favorites.vue") },
     { path: "/about", component: () => import("./views/About.vue") },
+    { path: "/login", component: () => import("./views/Account.vue") },
+    { path: "/register", component: () => import("./views/Account.vue") },
+    { path: "/account", component: () => import("./views/Account.vue") },
     {
       path: "/:pathMatch(.*)*",
       component: () => import("./views/NotFound.vue"),
@@ -26,4 +45,4 @@ const router = createRouter({
 router.afterEach(() => {
   document.title = "VALORANT Atlas · 电竞数据图鉴";
 });
-createApp(App).use(createPinia()).use(router).mount("#app");
+createApp(App).use(pinia).use(router).mount("#app");
