@@ -28,9 +28,9 @@ test("only known local app routes can be return destinations", () => {
     "/explore/player?q=abc",
   );
 });
-test("registration validates matching password, nickname and username without trimming password", () => {
+test("registration validates matching password, nickname and email without trimming password", () => {
   const good = {
-    username: "player21",
+    email: "player@qq.com",
     password: "a strong password",
     confirm: "a strong password",
     name: "小明",
@@ -38,10 +38,7 @@ test("registration validates matching password, nickname and username without tr
   assert.equal(validateRegistration(good), "");
   assert.match(validateRegistration({ ...good, confirm: "wrong" }), /一致/);
   assert.match(validateRegistration({ ...good, name: "  " }), /昵称/);
-  assert.match(
-    validateRegistration({ ...good, username: "bad-email" }),
-    /用户名/,
-  );
+  assert.match(validateRegistration({ ...good, email: "bad-email" }), /邮箱/);
   assert.match(
     validateRegistration({ ...good, password: "123", confirm: "123" }),
     /8/,
@@ -69,7 +66,7 @@ test("service rejects invalid registration before sending any network request", 
       },
     },
   });
-  await assert.rejects(service.register({}), /用户名/);
+  await assert.rejects(service.register({}), /邮箱/);
   assert.equal(called, false);
 });
 test("login, logout errors propagate and unconfigured service never fakes success", async () => {
@@ -81,12 +78,12 @@ test("login, logout errors propagate and unconfigured service never fakes succes
       signOut: async () => ({ error: { code: "request_timeout" } }),
     },
   });
-  await assert.rejects(service.login("player21", "bad"), /用户名或密码/);
+  await assert.rejects(service.login("player@qq.com", "bad"), /邮箱或密码/);
   await assert.rejects(service.logout(), /连接/);
   await assert.rejects(
-    createAccountService(null).login("player21", "123"),
+    createAccountService(null).login("player@qq.com", "123"),
     /尚未/,
   );
-  assert.match(authMessage({ code: "email_not_confirmed" }), /配置/);
+  assert.match(authMessage({ code: "email_not_confirmed" }), /验证/);
   assert.match(authMessage({ code: "over_email_send_rate_limit" }), /稍后/);
 });

@@ -31,7 +31,7 @@ for name in allowed:
     for insert in re.finditer(r'^INSERT INTO `'+name+r'` VALUES (.*);$',source,re.M):
         rows.extend(dict(zip(columns,row,strict=True)) for row in tuples(insert.group(1)))
     data[name]=rows
-out=Path(__file__).resolve().parents[1]/'public/data/catalog.json'
+out=Path(__file__).resolve().parents[1]/'supabase/catalog.seed.json'
 out.parent.mkdir(parents=True,exist_ok=True)
 out.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')),encoding='utf8')
 print({name:len(rows) for name,rows in data.items()})

@@ -2072,3 +2072,36 @@ button:disabled {
     visibility: visible;
   }
 }
+/* The public account screens never render the member navigation or catalog. */
+.auth-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 40px;
+}
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 0 36px;
+}
+.auth-shell .account-layout {
+  min-height: 70vh;
+}
+.account-email {
+  overflow-wrap: anywhere;
+}
+.account-card .btn.secondary {
+  margin-top: 12px;
+}
+@media (max-width: 700px) {
+  .auth-shell {
+    padding: 20px 16px;
+  }
+  .auth-header {
+    padding-bottom: 24px;
+  }
+  .auth-header > .muted {
+    display: none;
+  }
+}

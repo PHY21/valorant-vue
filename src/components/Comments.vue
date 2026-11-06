@@ -56,14 +56,12 @@ async function submit() {
   error.value = "";
   message.value = "";
   try {
-    const { error: failure } = await supabase
-      .from("atlas_comments")
-      .insert({
-        author_id: author,
-        target: props.target,
-        body: text.value.trim(),
-        rating: Number(rating.value),
-      });
+    const { error: failure } = await supabase.from("atlas_comments").insert({
+      author_id: author,
+      target: props.target,
+      body: text.value.trim(),
+      rating: Number(rating.value),
+    });
     if (failure) throw failure;
     if (active && auth.user?.id === author) {
       text.value = "";
@@ -105,7 +103,7 @@ async function remove(comment) {
     <span class="eyebrow">YOUR TAKE</span>
     <h2>留下你的看法</h2>
     <p class="method-note">
-      评价公开可见，登录后以账号昵称发表。请友善交流，不要填写私人联系方式。
+      评价对已登录用户可见，以账号昵称发表。请友善交流，不要填写私人联系方式。
     </p>
     <p v-if="!auth.configured" class="notice">在线评价服务正在准备中。</p>
     <p v-else-if="!auth.ready" role="status">正在恢复登录状态…</p>

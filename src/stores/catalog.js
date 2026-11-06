@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { readSaved } from "../lib/storage";
+import { supabase } from "../lib/supabase.js";
 export const useCatalog = defineStore("catalog", () => {
   const data = ref(null),
     loading = ref(false),
@@ -32,17 +33,31 @@ export const useCatalog = defineStore("catalog", () => {
     },
     { deep: true },
   );
+  let generation = 0;
+  function clearData() {
+    generation++;
+    data.value = null;
+    loading.value = false;
+    error.value = "";
+  }
   async function load() {
+    const current = ++generation;
     loading.value = true;
     error.value = "";
     try {
-      const r = await fetch(`${import.meta.env.BASE_URL}data/catalog.json`);
-      if (!r.ok) throw Error();
-      data.value = await r.json();
+      if (!supabase) throw Error();
+      const { data: row, error: failure } = await supabase
+        .from("atlas_catalog")
+        .select("content")
+        .eq("id", 1)
+        .single();
+      if (failure || !row) throw Error();
+      if (current === generation) data.value = row.content;
     } catch {
-      error.value = "数据暂时无法加载，请检查网络后重试。";
+      if (current === generation)
+        error.value = "数据暂时无法加载，请检查登录状态和网络后重试。";
     } finally {
-      loading.value = false;
+      if (current === generation) loading.value = false;
     }
   }
   const players = computed(
@@ -78,6 +93,7 @@ export const useCatalog = defineStore("catalog", () => {
     loading,
     error,
     load,
+    clearData,
     favorites,
     comments,
     toggle,
