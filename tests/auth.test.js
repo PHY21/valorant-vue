@@ -28,9 +28,9 @@ test("only known local app routes can be return destinations", () => {
     "/explore/player?q=abc",
   );
 });
-test("registration validates matching password, nickname and email without trimming password", () => {
+test("registration validates matching password, nickname and username without trimming password", () => {
   const good = {
-    email: "player@example.com",
+    username: "player21",
     password: "a strong password",
     confirm: "a strong password",
     name: "小明",
@@ -38,7 +38,10 @@ test("registration validates matching password, nickname and email without trimm
   assert.equal(validateRegistration(good), "");
   assert.match(validateRegistration({ ...good, confirm: "wrong" }), /一致/);
   assert.match(validateRegistration({ ...good, name: "  " }), /昵称/);
-  assert.match(validateRegistration({ ...good, email: "not-email" }), /邮箱/);
+  assert.match(
+    validateRegistration({ ...good, username: "bad-email" }),
+    /用户名/,
+  );
   assert.match(
     validateRegistration({ ...good, password: "123", confirm: "123" }),
     /8/,
@@ -57,31 +60,6 @@ test("only HTTPS Supabase host and public publishable key may enter frontend con
     assert.equal(publicAuthConfig(url, key), null);
   }
 });
-test("service reports confirmation pending and keeps password only in SDK request", async () => {
-  let request;
-  const service = createAccountService({
-    auth: {
-      signUp: async (args) => {
-        request = args;
-        return { data: { user: { id: "u" }, session: null }, error: null };
-      },
-    },
-  });
-  const result = await service.register(
-    {
-      email: " player@example.com ",
-      name: " 玩家 ",
-      password: "password 123",
-      confirm: "password 123",
-    },
-    "https://site.test/",
-  );
-  assert.equal(result.session, null);
-  assert.equal(request.email, "player@example.com");
-  assert.equal(request.options.data.display_name, "玩家");
-  assert.equal(request.password, "password 123");
-  assert.equal("password" in result, false);
-});
 test("service rejects invalid registration before sending any network request", async () => {
   let called = false;
   const service = createAccountService({
@@ -91,7 +69,7 @@ test("service rejects invalid registration before sending any network request", 
       },
     },
   });
-  await assert.rejects(service.register({}), /邮箱/);
+  await assert.rejects(service.register({}), /用户名/);
   assert.equal(called, false);
 });
 test("login, logout errors propagate and unconfigured service never fakes success", async () => {
@@ -103,26 +81,12 @@ test("login, logout errors propagate and unconfigured service never fakes succes
       signOut: async () => ({ error: { code: "request_timeout" } }),
     },
   });
-  await assert.rejects(service.login("p@example.com", "bad"), /邮箱或密码/);
+  await assert.rejects(service.login("player21", "bad"), /用户名或密码/);
   await assert.rejects(service.logout(), /连接/);
   await assert.rejects(
-    createAccountService(null).login("a@b.co", "123"),
+    createAccountService(null).login("player21", "123"),
     /尚未/,
   );
-  assert.match(authMessage({ code: "email_not_confirmed" }), /验证/);
+  assert.match(authMessage({ code: "email_not_confirmed" }), /配置/);
   assert.match(authMessage({ code: "over_email_send_rate_limit" }), /稍后/);
-});
-
-test("resend requires an email and cannot send an empty callback recovery request", async () => {
-  let sent = false;
-  const service = createAccountService({
-    auth: {
-      resend: async () => {
-        sent = true;
-        return { data: {}, error: null };
-      },
-    },
-  });
-  await assert.rejects(service.resend("", "https://site.test/"), /邮箱/);
-  assert.equal(sent, false);
 });

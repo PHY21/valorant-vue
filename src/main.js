@@ -6,19 +6,7 @@ import "./style.css";
 import { useAuth } from "./stores/auth.js";
 const pinia = createPinia();
 const auth = useAuth(pinia);
-// Supabase consumes its URL fragment before the hash router can rewrite it.
-const authCallback = /^#(?:access_token=|error=|error_code=)/.test(
-  window.location.hash,
-);
-const restored = auth.initialize();
-if (authCallback) {
-  await restored;
-  window.history.replaceState(
-    null,
-    "",
-    `${window.location.pathname}${window.location.search}#/account`,
-  );
-}
+auth.initialize();
 const router = createRouter({
   history: createWebHashHistory(),
   scrollBehavior: () => ({ top: 0 }),

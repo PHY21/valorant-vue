@@ -39,14 +39,15 @@ export function createAuthStore(client) {
       })();
       return initialization;
     }
-    async function login(email, password) {
-      const data = await service.login(email, password);
+    async function login(username, password) {
+      const data = await service.login(username, password);
       user.value = data.user;
       error.value = "";
     }
-    async function register(fields, redirectTo) {
-      const data = await service.register(fields, redirectTo);
+    async function register(fields) {
+      const data = await service.register(fields);
       user.value = data.session?.user || null;
+      error.value = "";
       return Boolean(data.session);
     }
     async function logout() {
@@ -63,7 +64,6 @@ export function createAuthStore(client) {
       login,
       register,
       logout,
-      resend: service.resend,
     };
   });
 }

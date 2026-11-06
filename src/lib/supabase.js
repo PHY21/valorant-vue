@@ -11,7 +11,7 @@ export const supabase = config
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: true,
+        detectSessionInUrl: false,
         flowType: "implicit",
       },
     })

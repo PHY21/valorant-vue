@@ -10,16 +10,13 @@ const auth = useAuth(),
 const registering = computed(() => route.path === "/register");
 const destination = computed(() => safeReturnPath(route.query.returnTo));
 const name = ref(""),
-  email = ref(""),
+  username = ref(""),
   password = ref(""),
   confirm = ref("");
 const busy = ref(false),
   error = ref(""),
   message = ref(""),
-  pendingEmail = ref(""),
   showPassword = ref(false);
-const redirectTo = new URL(import.meta.env.BASE_URL, window.location.origin)
-  .href;
 watch(
   () => route.path,
   () => {
@@ -27,7 +24,6 @@ watch(
     message.value = "";
     password.value = "";
     confirm.value = "";
-    pendingEmail.value = "";
   },
 );
 async function submit() {
@@ -37,43 +33,18 @@ async function submit() {
   message.value = "";
   try {
     if (registering.value) {
-      const loggedIn = await auth.register(
-        {
-          name: name.value,
-          email: email.value,
-          password: password.value,
-          confirm: confirm.value,
-        },
-        redirectTo,
-      );
-      if (!loggedIn) {
-        pendingEmail.value = email.value.trim();
-        message.value =
-          "如果此邮箱可用于注册，验证邮件将发送到你的邮箱。请打开邮件完成验证；已有账号可直接登录。";
-        password.value = "";
-        confirm.value = "";
-        return;
-      }
+      await auth.register({
+        name: name.value,
+        username: username.value,
+        password: password.value,
+        confirm: confirm.value,
+      });
     } else {
-      await auth.login(email.value, password.value);
+      await auth.login(username.value, password.value);
     }
     password.value = "";
     confirm.value = "";
     await router.replace(destination.value);
-  } catch (failure) {
-    error.value = failure.message;
-  } finally {
-    busy.value = false;
-  }
-}
-async function resend() {
-  if (busy.value) return;
-  busy.value = true;
-  error.value = "";
-  try {
-    await auth.resend(pendingEmail.value || email.value, redirectTo);
-    auth.error = "";
-    message.value = "验证邮件已请求发送，请查看收件箱或垃圾邮件。";
   } catch (failure) {
     error.value = failure.message;
   } finally {
@@ -103,7 +74,7 @@ async function logout() {
         加入 Atlas，用你的视角记录赛场表现。<br />同一个账号，在不同设备继续交流。
       </p>
       <div class="account-benefit">
-        <ShieldCheck :size="20" /><span>邮箱验证 · 账号专属评价</span>
+        <ShieldCheck :size="20" /><span>跨设备登录 · 账号专属评价</span>
       </div>
       <div class="account-art" aria-hidden="true">
         V<span>ATLAS / COMMUNITY</span>
@@ -118,7 +89,9 @@ async function logout() {
       <template v-else-if="auth.user">
         <span class="eyebrow">MY ACCOUNT</span>
         <h2 id="account-title">你好，{{ auth.displayName }}</h2>
-        <p class="account-email">{{ auth.user.email }}</p>
+        <p class="account-email">
+          用户名：{{ auth.user.user_metadata?.username }}
+        </p>
         <p class="method-note">
           你已登录。公开评价将使用你的账号昵称，换设备登录后仍可管理自己的评价。选手收藏仍仅保存在当前浏览器。
         </p>
@@ -141,7 +114,7 @@ async function logout() {
         <p class="muted">
           {{
             registering
-              ? "用常用邮箱开启你的图鉴之旅。"
+              ? "创建用户名，开启你的图鉴之旅。"
               : "登录账号，继续分享你的看法。"
           }}
         </p>
@@ -160,14 +133,16 @@ async function logout() {
                 placeholder="1–24 个字符，公开评价时展示"
             /></label>
             <label
-              >邮箱<input
-                v-model="email"
-                name="email"
-                type="email"
-                autocomplete="email"
-                maxlength="254"
+              >用户名<input
+                v-model="username"
+                name="username"
+                type="text"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                maxlength="24"
                 required
-                placeholder="you@example.com"
+                placeholder="3–24 位，字母开头，可含数字和下划线"
             /></label>
             <label
               >密码<input
@@ -203,16 +178,8 @@ async function logout() {
           </fieldset>
         </form>
         <p v-if="registering" class="caption">
-          注册后请查看验证邮件。昵称和发表的评价公开可见，邮箱不会展示在评价中。
+          用户名不区分大小写；昵称和发表的评价公开可见。不收集邮箱，暂不支持密码找回，请妥善保存账号密码。
         </p>
-        <button
-          v-if="pendingEmail || (error || auth.error).includes('验证')"
-          class="text-link resend-button"
-          :disabled="busy || !auth.configured"
-          @click="resend"
-        >
-          重新发送验证邮件
-        </button>
         <p class="account-switch">
           {{ registering ? "已经有账号？" : "还没有账号？" }}
           <RouterLink

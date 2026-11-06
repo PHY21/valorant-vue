@@ -9,14 +9,24 @@ export function safeReturnPath(value) {
     : "/account";
 }
 
+export function usernameIdentity(value = "") {
+  const username = value.trim().toLowerCase();
+  if (!/^[a-z][a-z0-9_]{2,23}$/.test(username))
+    throw new Error("用户名需 3–24 位，字母开头，仅含字母、数字和下划线。");
+  return `atlas.${username}@accounts.invalid`;
+}
+
 export function validateRegistration({
-  email = "",
+  username = "",
   password = "",
   confirm = "",
   name = "",
 }) {
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-    return "请输入有效的邮箱地址。";
+  try {
+    usernameIdentity(username);
+  } catch (error) {
+    return error.message;
+  }
   if (!name.trim() || name.trim().length > 24) return "昵称需要 1–24 个字符。";
   if (password.length < 8 || password.length > 128)
     return "密码需要 8–128 个字符。";
@@ -47,17 +57,14 @@ export function publicAuthConfig(url, key) {
 
 export function authMessage(error) {
   const messages = {
-    invalid_credentials: "邮箱或密码不正确，请重新输入。",
-    email_not_confirmed: "请先打开注册邮件，完成邮箱验证后再登录。",
-    user_already_exists: "此邮箱可能已经注册，请尝试登录。",
-    email_exists: "此邮箱可能已经注册，请尝试登录。",
+    invalid_credentials: "用户名或密码不正确，请重新输入。",
+    email_not_confirmed: "账号服务配置尚未完成，请稍后再试。",
+    user_already_exists: "用户名已被使用，请换一个用户名或直接登录。",
+    email_exists: "用户名已被使用，请换一个用户名或直接登录。",
     weak_password: "密码强度不足，请增加长度并混合使用字母、数字和符号。",
     signup_disabled: "暂时未开放注册，请稍后再试。",
-    email_address_not_authorized:
-      "验证邮件暂时无法发送，站点管理员需要配置邮件服务。",
-    over_email_send_rate_limit: "邮件发送过于频繁，请稍后再试。",
     over_request_rate_limit: "操作过于频繁，请稍后再试。",
-    otp_expired: "验证链接已过期或已使用，请重新发送验证邮件。",
+    over_email_send_rate_limit: "账号服务配置尚未完成，请稍后再试。",
   };
   return messages[error?.code] || "暂时无法连接账号服务，请检查网络后重试。";
 }
@@ -78,38 +85,35 @@ export function createAccountService(client) {
     }
   }
   return {
-    async register(fields, redirectTo) {
+    async register(fields) {
       const invalid = validateRegistration(fields);
       if (invalid) throw new Error(invalid);
-      return result(
+      const data = await result(
         requireClient().signUp({
-          email: fields.email.trim(),
+          email: usernameIdentity(fields.username),
           password: fields.password,
           options: {
-            data: { display_name: fields.name.trim() },
-            emailRedirectTo: redirectTo,
+            data: {
+              display_name: fields.name.trim(),
+              username: fields.username.trim().toLowerCase(),
+            },
           },
         }),
       );
+      if (!data?.session)
+        throw new Error("账号服务配置尚未完成，暂时无法注册，请稍后再试。");
+      return data;
     },
-    async login(email, password) {
+    async login(username, password) {
       return result(
-        requireClient().signInWithPassword({ email: email.trim(), password }),
+        requireClient().signInWithPassword({
+          email: usernameIdentity(username),
+          password,
+        }),
       );
     },
     async logout() {
       return result(requireClient().signOut({ scope: "local" }));
-    },
-    async resend(email, redirectTo) {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
-        throw new Error("请先在邮箱栏填写注册时使用的邮箱地址。");
-      return result(
-        requireClient().resend({
-          type: "signup",
-          email: email.trim(),
-          options: { emailRedirectTo: redirectTo },
-        }),
-      );
     },
   };
 }

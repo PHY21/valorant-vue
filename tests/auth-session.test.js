@@ -3,18 +3,18 @@ import assert from "node:assert/strict";
 import { createPinia } from "pinia";
 import { createAuthStore } from "../src/stores/auth.js";
 
-test("expired confirmation reports initialization error even when getSession returns no error", async () => {
+test("session initialization failure is reported even when getSession returns no error", async () => {
   const store = createAuthStore({
     auth: {
       onAuthStateChange() {},
-      initialize: async () => ({ error: { code: "otp_expired" } }),
+      initialize: async () => ({ error: { code: "request_timeout" } }),
       getSession: async () => ({ data: { session: null }, error: null }),
     },
   })(createPinia());
   await store.initialize();
   assert.equal(store.ready, true);
   assert.equal(store.user, null);
-  assert.match(store.error, /验证链接已过期/);
+  assert.match(store.error, /连接/);
 });
 
 test("restores session, listens for other-tab signout and does not register duplicate listeners", async () => {
