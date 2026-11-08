@@ -1,0 +1,176 @@
+{
+  "astra": {
+    "NOVA PULSE": 3.5,
+    "NEBULA": 12.542,
+    "GRAVITY WELL": 27.792,
+    "ASTRAL FORM / COSMIC DIVIDE": 43.458
+  },
+  "breach": {
+    "FLASHPOINT": 3.5,
+    "FAULT LINE": 10.667,
+    "AFTERSHOCK": 22.125,
+    "ROLLING THUNDER": 31.5
+  },
+  "brimstone": {
+    "INCENDIARY": 3.5,
+    "SKY SMOKE": 10.75,
+    "STIM BEACON": 23.75,
+    "ORBITAL STRIKE": 29.625
+  },
+  "chamber": {
+    "HEADHUNTER": 3.5,
+    "RENDEZVOUS": 11.125,
+    "TRADEMARK": 25.625,
+    "TOUR DE FORCE": 38.375
+  },
+  "clove": {
+    "Meddle": 3.5,
+    "Ruse": 12.667,
+    "Pick-Me-Up": 53.583,
+    "Not Dead Yet": 70.25
+  },
+  "cypher": {
+    "CYBER CAGE": 3.5,
+    "SPYCAM": 13.75,
+    "TRAPWIRE": 23.0,
+    "NEURAL THEFT": 43.708
+  },
+  "deadlock": {
+    "SONIC SENSOR": 3.5,
+    "BARRIER MESH": 16.75,
+    "GRAVNET": 45.667,
+    "ANNIHILATION": 64.833
+  },
+  "fade": {
+    "SEIZE": 3.5,
+    "HAUNT": 9.625,
+    "PROWLER": 18.125,
+    "NIGHTFALL": 22.375
+  },
+  "gekko": {
+    "WINGMAN": 3.5,
+    "DIZZY": 17.667,
+    "MOSH PIT": 32.0,
+    "THRASH": 46.958
+  },
+  "harbor": {
+    "HIGH TIDE": 3.5,
+    "STORM SURGE": 11.958,
+    "COVE (COVE SMOKE)": 16.875,
+    "RECKONING": 28.125
+  },
+  "iso": {
+    "UNDERCUT": 3.5,
+    "DOUBLE TAP": 14.167,
+    "CONTINGENCY": 28.667,
+    "KILL CONTRACT": 41.333
+  },
+  "jett": {
+    "UPDRAFT": 3.5,
+    "TAILWIND": 5.917,
+    "CLOUDBURST": 15.292,
+    "BLADE STORM": 25.708
+  },
+  "kay-o": {
+    "FLASH/DRIVE": 3.5,
+    "ZERO/POINT": 12.083,
+    "FRAG/MENT": 20.292,
+    "NULL/CMD": 27.833
+  },
+  "killjoy": {
+    "ALARMBOT": 3.5,
+    "TURRET": 12.958,
+    "NANOSWARM": 22.25,
+    "LOCKDOWN": 31.292
+  },
+  "miks": {
+    "HARMONIZE": 3.5,
+    "WAVEFORM": 8.542,
+    "M-pulse": 14.625,
+    "BASSQUAKE": 22.417
+  },
+  "neon": {
+    "RELAY BOLT": 3.5,
+    "HIGH GEAR": 6.417,
+    "FAST LANE": 11.75,
+    "OVERDRIVE": 16.333
+  },
+  "omen": {
+    "PARANOIA": 3.5,
+    "DARK COVER": 14.125,
+    "SHROUDED STEP": 28.542,
+    "FROM THE SHADOWS": 38.875
+  },
+  "phoenix": {
+    "CURVEBALL": 3.5,
+    "HOT HANDS": 15.208,
+    "BLAZE": 24.5,
+    "RUN IT BACK": 43.167
+  },
+  "raze": {
+    "BLAST PACK": 3.5,
+    "PAINT SHELLS": 15.042,
+    "BOOM BOT": 23.292,
+    "SHOWSTOPPER": 34.625
+  },
+  "reyna": {
+    "DEVOUR": 3.5,
+    "DISMISS": 13.458,
+    "LEER": 35.417,
+    "EMPRESS": 48.333
+  },
+  "sage": {
+    "SLOW ORB": 3.5,
+    "HEALING ORB": 14.125,
+    "BARRIER ORB": 19.167,
+    "RESURRECTION": 37.0
+  },
+  "skye": {
+    "Trailblazer": 3.5,
+    "Guiding Light": 9.833,
+    "Regrowth": 15.125,
+    "Seekers": 22.917
+  },
+  "sova": {
+    "SHOCK BOLT": 3.5,
+    "RECON BOLT": 14.958,
+    "OWL DRONE": 30.292,
+    "HUNTER'S FURY": 41.75
+  },
+  "tejo": {
+    "Stealth Drone": 3.5,
+    "Special Delivery": 12.958,
+    "Guided Salvo": 18.167,
+    "Armageddon": 27.333
+  },
+  "veto": {
+    "CHOKEHOLD": 3.5,
+    "CROSSCUT": 8.708,
+    "INTERCEPTOR": 22.667,
+    "EVOLUTION": 35.333
+  },
+  "viper": {
+    "POISON CLOUD": 3.5,
+    "TOXIC SCREEN": 17.167,
+    "SNAKE BITE": 32.542,
+    "VIPER'S PIT": 45.458
+  },
+  "vyse": {
+    "Shear": 3.5,
+    "Arc Rose": 13.25,
+    "Razorvine": 22.417,
+    "Steel Garden": 31.75
+  },
+  "waylay": {
+    "Saturate": 3.5,
+    "Lightspeed": 8.0,
+    "Refract": 13.458,
+    "Convergent Paths": 23.083
+  },
+  "yoru": {
+    "BLINDSIDE": 3.5,
+    "GATECRASH": 7.917,
+    "FAKEOUT": 20.25,
+    "DIMENSIONAL DRIFT": 25.292
+  }
+}

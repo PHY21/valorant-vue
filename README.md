@@ -59,4 +59,6 @@ python scripts/export_data.py "原项目/Valorant数据库_期末作业.sql"
 
 ## 素材
 
+特工详情页的中文技能导览由本站将特工立绘、技能说明与 Riot Games 的四段技能演示剪辑而成，使用同站托管的 H.264 MP4。原版介绍视频保留为外部链接。技能卡优先播放官方演示，加载失败时切换到本站导览的对应时间段。各段官方素材地址见 [agent-guides.json](supabase/agent-guides.json)。
+
 VALORANT 品牌、选手照片等素材归各自权利人所有，本项目为非官方学习与作品展示。图标使用 Lucide，字体使用 Barlow Condensed / DM Sans，字体无法加载时使用系统字体。
