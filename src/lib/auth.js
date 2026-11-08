@@ -2,7 +2,7 @@ export function safeReturnPath(value) {
   if (typeof value !== "string" || /[\\\u0000-\u001f]/.test(value))
     return "/account";
   const [path] = value.split("?");
-  return /^(\/|\/account|\/favorites|\/compare(?:\/teams)?|\/rankings|\/about|\/explore\/(player|team|tournament|agent)|\/detail\/(player|team|tournament|agent)\/[1-9]\d*)$/.test(
+  return /^(\/|\/account|\/admin|\/favorites|\/compare(?:\/teams)?|\/rankings|\/about|\/explore\/(player|team|tournament|agent)|\/detail\/(player|team|tournament|agent)\/[1-9]\d*)$/.test(
     path,
   )
     ? value

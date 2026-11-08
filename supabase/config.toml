@@ -1,0 +1,4 @@
+[functions.atlas-vlr-preview]
+# The function checks the caller's bearer token and owner binding via PostgREST
+# before fetching any external URL. This supports the project's current signing keys.
+verify_jwt = false

@@ -33,6 +33,7 @@ const router = createRouter({
     },
     { path: "/reset-password", component: () => import("./views/Account.vue") },
     { path: "/account", component: () => import("./views/Account.vue") },
+    { path: "/admin", component: () => import("./views/Admin.vue") },
     {
       path: "/:pathMatch(.*)*",
       component: () => import("./views/NotFound.vue"),

@@ -18,7 +18,20 @@ import {
 } from "lucide-vue-next";
 import { useCatalog } from "./stores/catalog";
 import { useAuth } from "./stores/auth.js";
+import { supabase } from "./lib/supabase.js";
 const auth = useAuth();
+const adminAccess = ref("checking");
+const permissionRetry = ref(0);
+watch([() => auth.member ? auth.user?.id : null, permissionRetry], async ([id], _, onCleanup) => {
+  let current = true;
+  onCleanup(() => { current = false; });
+  adminAccess.value = id ? "checking" : "denied";
+  if (!id) return;
+  try {
+    const { data, error } = await supabase.rpc("atlas_is_admin");
+    if (current) adminAccess.value = error ? "error" : data === true ? "allowed" : "denied";
+  } catch { if (current) adminAccess.value = "error"; }
+}, { immediate: true, flush: "sync" });
 function focusMain() {
   const el = document.getElementById("main");
   el?.focus();
@@ -108,6 +121,7 @@ watch(
         >
       </nav>
       <div class="sidebar-bottom">
+        <RouterLink v-if="adminAccess === 'allowed'" to="/admin"><Shield :size="17" />网站管理</RouterLink>
         <RouterLink to="/about"
           ><Info :size="17" />关于这个项目<ArrowUpRight :size="16"
         /></RouterLink>
@@ -146,8 +160,14 @@ watch(
         >
       </div>
       <main id="main" tabindex="-1">
+        <div v-if="route.path === '/admin' && adminAccess !== 'allowed'" class="panel admin-panel notice" role="status">
+          <p>{{ adminAccess === 'checking' ? '正在核对管理权限…' : adminAccess === 'error' ? '暂时无法核对管理权限。' : '此页面仅对网站管理员开放。' }}</p>
+          <button v-if="adminAccess === 'error'" class="btn secondary" @click="permissionRetry++">重试</button>
+          <RouterLink v-else-if="adminAccess === 'denied'" to="/">返回图鉴</RouterLink>
+        </div>
+        <RouterView v-else-if="route.path === '/admin' && store.data" :key="auth.user.id" />
         <RouterView
-          v-if="
+          v-else-if="
             [
               '/account',
               '/login',
