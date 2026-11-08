@@ -10,6 +10,7 @@ import {
   statuses,
 } from "../lib/admin";
 import { useCatalog } from "../stores/catalog";
+import PlayerChangePreview from "../components/PlayerChangePreview.vue";
 import AdminMatch from "../components/AdminMatch.vue";
 import AdminModeration from "../components/AdminModeration.vue";
 import PageHeading from "../components/PageHeading.vue";
@@ -46,6 +47,7 @@ const users = ref([]),
 const candidates = ref([]),
   fetched = ref(null),
   reviewEl = ref(null),
+  manualEditor = ref(null),
   owner = ref(false),
   pendingRole = ref(null),
   operations = ref([]);
@@ -58,7 +60,7 @@ const liveChanges = computed(() =>
 );
 async function showReview() {
   await nextTick();
-  reviewEl.value?.scrollIntoView({ behavior: "smooth", block: "center" });
+  reviewEl.value?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 const directoryStatus = {
   verified: "邮箱已验证",
@@ -95,13 +97,35 @@ function valueText(key, val) {
     );
   return val ?? "未设置";
 }
+function cancelPreview() {
+  review.value = [];
+  accepted.value = [];
+  fetched.value = null;
+  source.value = null;
+  note.value = "";
+  message.value = "";
+}
+async function editPreview() {
+  if (fetched.value) {
+    for (const change of review.value) {
+      if (change.key !== "vlr_url" && accepted.value.includes(change.key)) {
+        draft.value[change.key] = change.after;
+      }
+    }
+  }
+  cancelPreview();
+  await nextTick();
+  manualEditor.value.open = true;
+  manualEditor.value.querySelector("input")?.focus();
+  manualEditor.value.scrollIntoView({ block: "start" });
+}
 function preview(values, from = null) {
   const changes = differences(base.value, values);
   review.value = changes;
   accepted.value = changes.map((c) => c.key);
   source.value = from;
   showReview();
-  message.value = changes.length ? "" : "资料一致，没有需要发布的修改。";
+  message.value = "";
 }
 async function sync(input = url.value) {
   fetched.value = null;
@@ -180,7 +204,9 @@ async function publish() {
     accepted.value = [];
     message.value = catalog.error
       ? "已发布，但重新读取资料失败。请刷新页面。"
-      : "已发布，选手图鉴已更新。";
+      : rows.every((row) => row.key === "vlr_url")
+        ? "已绑定 VLR 来源链接，下次可直接同步这位选手。"
+        : "已发布，选手图鉴已更新。";
   } catch (err) {
     message.value = adminError(err);
   } finally {
@@ -191,7 +217,6 @@ async function openTab(name, num = 0) {
   if (busy.value) return;
   tab.value = name;
   message.value = "";
-  note.value = "";
   pendingRole.value = null;
   if (!["users", "history"].includes(name)) return;
   busy.value = true;
@@ -333,7 +358,7 @@ function date(value) {
           <button class="btn secondary" @click="sync(c.url)">预览此人</button>
         </div>
       </div>
-      <details>
+      <details ref="manualEditor">
         <summary>手动编辑 / 登记转会</summary>
         <form
           @submit.prevent="
@@ -393,76 +418,20 @@ function date(value) {
         </form>
       </details>
     </fieldset>
-    <div ref="reviewEl" aria-live="polite">
-      <p v-if="fetched" class="notice">
-        <b>已读取 {{ fetched.ign }}</b> ·
-        {{ fetched.real_name || "未列姓名" }} ·
-        {{ fetched.nationality || "未列地区" }} ·
-        {{ fetched.teams.join("、") || "未列战队" }}。{{
-          review.length
-            ? "下方列出与本站不同的字段。"
-            : "与本站可核对的字段一致。"
-        }}
-      </p>
-      <p v-if="note" class="notice">{{ note }}</p>
-      <div v-if="review.length" class="admin-review">
-        <h2>{{ base.ign }} · 共 {{ review.length }} 项差异</h2>
-        <a
-          v-if="source"
-          :href="source"
-          target="_blank"
-          rel="noopener noreferrer"
-          >核对 VLR 原始资料 ↗</a
-        >
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>发布字段</th>
-                <th>修改前（本站）</th>
-                <th>修改后（待发布）</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="c in review" :key="c.key">
-                <th>
-                  <label class="check-field"
-                    ><input
-                      type="checkbox"
-                      v-model="accepted"
-                      :disabled="busy"
-                      :value="c.key"
-                    />{{ labels[c.key] }}</label
-                  >
-                </th>
-                <td>{{ valueText(c.key, c.before) }}</td>
-                <td>{{ valueText(c.key, c.after) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="admin-actions">
-          <button
-            class="btn"
-            :disabled="busy || !accepted.length"
-            @click="publish"
-          >
-            发布选中的 {{ accepted.length }} 项修改
-          </button>
-          <button
-            class="btn secondary"
-            :disabled="busy"
-            @click="
-              review = [];
-              fetched = null;
-              message = '';
-              note = '';
-            "
-          >
-            取消预览
-          </button>
-        </div>
-      </div>
+    <div ref="reviewEl">
+      <PlayerChangePreview
+        v-if="fetched || review.length"
+        :player="base"
+        :profile="fetched"
+        :changes="review"
+        v-model:selected="accepted"
+        :value-text="valueText"
+        :note="note"
+        :busy="busy"
+        @edit="editPreview"
+        @cancel="cancelPreview"
+        @publish="publish"
+      />
     </div>
   </section>
   <AdminMatch v-else-if="tab === 'matches'" />
@@ -646,20 +615,11 @@ function date(value) {
   display: block;
   color: var(--muted);
 }
-.admin-panel .check-field {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
 .admin-panel td {
   white-space: normal;
   min-width: 95px;
 }
 .admin-panel a {
   text-decoration: underline;
-}
-.admin-review {
-  border-top: 1px solid var(--line);
-  margin-top: 16px;
 }
 </style>
