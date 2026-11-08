@@ -14,6 +14,27 @@ const rows = computed(() =>
   }).slice(0, 30),
 );
 const metrics = { rating: "Rating", acs: "ACS", kd: "K/D" };
+const tournamentTeams = computed(() => {
+  const byPlayer = new Map();
+  if (!tournament.value) return byPlayer;
+  const teams = new Map(
+    s.data.team.map((team) => [team.team_id, team.team_tag || team.team_name]),
+  );
+  const eventId = Number(tournament.value);
+  for (const stat of s.data.player_tournament_stats) {
+    if (stat.tournament_id !== eventId || !(stat.matches_played > 0)) continue;
+    if (!byPlayer.has(stat.player_id)) byPlayer.set(stat.player_id, new Set());
+    byPlayer.get(stat.player_id).add(teams.get(stat.team_id) || "队伍未收录");
+  }
+  return byPlayer;
+});
+function teamLabel(player) {
+  if (!tournament.value) return player.team_tag;
+  return (
+    [...(tournamentTeams.value.get(player.player_id) || [])].join(" / ") ||
+    "队伍未收录"
+  );
+}
 </script>
 <template>
   <PageHeading
@@ -57,7 +78,7 @@ const metrics = { rating: "Rating", acs: "ACS", kd: "K/D" };
       <thead>
         <tr>
           <th>排名</th>
-          <th>选手 / 战队</th>
+          <th>选手 / {{ tournament ? "当届参赛战队" : "当前战队" }}</th>
           <th>Rating</th>
           <th>ACS</th>
           <th>K/D</th>
@@ -78,7 +99,7 @@ const metrics = { rating: "Rating", acs: "ACS", kd: "K/D" };
               class="table-player"
               ><Portrait :player="p" /><span
                 ><strong>{{ p.ign }}</strong
-                ><small>{{ p.team_tag }}</small></span
+                ><small>{{ teamLabel(p) }}</small></span
               ></RouterLink
             >
           </td>
