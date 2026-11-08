@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import {
+  Bell,
   LayoutDashboard,
   Users,
   Shield,
@@ -16,10 +17,17 @@ import {
   Info,
   UserRound,
 } from "lucide-vue-next";
+import { useMemberNews } from "./stores/memberNews";
 import { useCatalog } from "./stores/catalog";
 import { useAuth } from "./stores/auth.js";
 import { supabase } from "./lib/supabase.js";
 const auth = useAuth();
+const news = useMemberNews();
+watch(
+  () => auth.member ? auth.user?.id : null,
+  id => news.connect(id),
+  { immediate: true, flush: "sync" },
+);
 const adminAccess = ref("checking");
 const permissionRetry = ref(0);
 watch([() => auth.member ? auth.user?.id : null, permissionRetry], async ([id], _, onCleanup) => {
@@ -147,6 +155,7 @@ watch(
         <div>
           <span class="muted">探索游戏背后的</span> <strong>每一份实力</strong>
         </div>
+        <div class="top-tools"><RouterLink to="/inbox" class="top-link inbox-link" :aria-label="'我的消息，'+news.unread+' 条未读'"><Bell :size="18"/><span>消息</span><b v-if="news.unread" class="unread-count">{{news.unread>99?'99+':news.unread}}</b></RouterLink>
         <RouterLink
           :to="
             auth.user
@@ -158,6 +167,7 @@ watch(
             auth.user ? auth.displayName : "登录 / 注册"
           }}</span></RouterLink
         >
+        </div>
       </div>
       <main id="main" tabindex="-1">
         <div v-if="route.path === '/admin' && adminAccess !== 'allowed'" class="panel admin-panel notice" role="status">
@@ -189,6 +199,7 @@ watch(
           <button class="btn" @click="store.load">重新加载</button>
         </div>
         <RouterView v-else-if="store.data" />
+        <p v-if="news.followError" class="notice" role="alert">{{news.followError}} <button class="text-link" @click="news.refreshFollows()">重试同步</button></p>
         <p v-if="store.storageError" role="status" class="notice">
           {{ store.storageError }}
         </p>
@@ -203,3 +214,8 @@ watch(
     </div>
   </template>
 </template>
+
+<style scoped>
+.top-tools,.inbox-link{display:flex;align-items:center;gap:8px}.top-tools{gap:18px}
+.unread-count{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:12px;background:#b72d27;color:#fff;font-size:11px}
+</style>

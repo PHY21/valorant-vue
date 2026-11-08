@@ -72,6 +72,16 @@ test("owner delegates and revokes; editors publish and moderate but cannot grant
         "utf8",
       ),
     );
+    await db.exec("create publication supabase_realtime");
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/20261108144612_favorite_inbox.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
     await db.exec(
       `insert into atlas_private.admin_owner(user_id) values('${owner}'); set role anon;`,
     );
@@ -171,18 +181,59 @@ test("owner delegates and revokes; editors publish and moderate but cannot grant
       db.query(add.replace("2,3,2,1", "2,2,2,1")),
       /INVALID_MATCH/,
     );
+    await db.exec(
+      "insert into public.atlas_follows(kind,target_id) values ('team',2),('team',3),('player',1)",
+    );
+    await assert.rejects(
+      db.query(
+        `insert into public.atlas_follows(user_id,kind,target_id) values ('${owner}','player',1)`,
+      ),
+      (e) => e.code === "42501",
+    );
     await db.query(add);
     await assert.rejects(db.query(add), /DUPLICATE_MATCH/);
     await db.query(
       `select public.atlas_publish_player(1,'{"team_id":2}','{"team_id":3}')`,
     );
+    const inbox = () =>
+      db.query("select id,event,is_read from public.atlas_inbox order by id");
+    const delivered = (await inbox()).rows;
+    assert.deepEqual(
+      delivered.map((m) => m.event.kind),
+      ["赛果", "转会"],
+    );
+    assert.ok(delivered.every((m) => !m.is_read));
+    await db.query("update public.atlas_inbox set is_read=true where id=$1", [
+      delivered[0].id,
+    ]);
+    await assert.rejects(
+      db.query("update public.atlas_inbox set event='{}'"),
+      (e) => e.code === "42501",
+    );
+    await db.exec(`set request.jwt.claim.sub='${owner}'`);
+    assert.equal((await inbox()).rows.length, 0);
+    assert.equal(
+      (
+        await db.query(
+          "update public.atlas_inbox set is_read=true returning id",
+        )
+      ).rows.length,
+      0,
+    );
+    await db.exec(`set request.jwt.claim.sub='${member}'`);
+    assert.equal((await inbox()).rows[0].is_read, true);
+    await db.exec("delete from public.atlas_follows where kind='player'");
+    await db.query(
+      `select public.atlas_publish_player(1,'{"team_id":3}','{"team_id":2}')`,
+    );
+    assert.equal((await inbox()).rows.length, 2);
     await db.query(del);
     await assert.rejects(db.query(del), /COMMENT_GONE/);
     await db.exec("reset role");
     const changed = (await db.query("select content from public.atlas_catalog"))
       .rows[0].content;
-    assert.equal(changed.news.length, 2);
-    assert.match(changed.news[0].title, /Alpha → Beta/);
+    assert.equal(changed.news.length, 3);
+    assert.match(changed.news[1].title, /Alpha → Beta/);
     assert.equal(changed.team_matches[0].score_a, 2);
     assert.equal(changed.team_matches[0].id, -1);
     assert.equal(

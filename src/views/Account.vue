@@ -198,7 +198,7 @@ async function logout() {
         <h2 id="account-title">{{ title }}</h2>
         <p class="account-email">{{ auth.user.email }}</p>
         <p class="method-note">
-          邮箱已验证。你可以在不同设备登录并管理自己的评价。收藏保存在当前浏览器。
+          邮箱已验证。你可以在不同设备登录并管理自己的评价。收藏和站内消息随账号同步。
         </p>
         <RouterLink
           class="btn"

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { readSaved } from "../lib/storage";
+import { useMemberNews } from "./memberNews";
 import { supabase } from "../lib/supabase.js";
 export const useCatalog = defineStore("catalog", () => {
   const data = ref(null),
@@ -13,18 +14,19 @@ export const useCatalog = defineStore("catalog", () => {
   } catch {
     saved = readSaved(null);
   }
-  const favorites = ref(saved.favorites),
-    teamFavorites = ref(saved.teamFavorites),
+  const news = useMemberNews();
+  const legacyPlayers = ref(saved.favorites),
+    legacyTeams = ref(saved.teamFavorites),
     comments = ref(saved.comments);
   watch(
-    [favorites, teamFavorites, comments],
+    [legacyPlayers, legacyTeams, comments],
     () => {
       try {
         localStorage.setItem(
           "atlas-v1",
           JSON.stringify({
-            favorites: favorites.value,
-            teamFavorites: teamFavorites.value,
+            favorites: legacyPlayers.value,
+            teamFavorites: legacyTeams.value,
             comments: comments.value,
           }),
         );
@@ -74,11 +76,11 @@ export const useCatalog = defineStore("catalog", () => {
         };
       }) || [],
   );
-  function toggle(id, kind = "player") {
-    const list = kind === "team" ? teamFavorites : favorites;
-    list.value = list.value.includes(id)
-      ? list.value.filter((x) => x !== id)
-      : [...list.value, id];
+  async function importFavorites() {
+    if (await news.importLegacy(legacyPlayers.value, legacyTeams.value)) {
+      legacyPlayers.value = [];
+      legacyTeams.value = [];
+    }
   }
   function addComment(c) {
     comments.value.unshift({
@@ -97,10 +99,13 @@ export const useCatalog = defineStore("catalog", () => {
     error,
     load,
     clearData,
-    favorites,
-    teamFavorites,
+    favorites: computed(() => news.favorites),
+    teamFavorites: computed(() => news.teamFavorites),
+    legacyPlayers,
+    legacyTeams,
+    importFavorites,
     comments,
-    toggle,
+    toggle: news.toggle,
     addComment,
     removeComment,
     storageError,
