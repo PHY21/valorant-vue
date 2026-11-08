@@ -70,6 +70,27 @@ const events = computed(() =>
       </div>
     </div>
   </section>
+  <section v-if="s.data.news?.length" class="panel ops">
+    <span class="eyebrow">FROM THE DESK</span>
+    <h2>赛场动态</h2>
+    <RouterLink
+      v-for="(n, i) in s.data.news.slice(0, 10)"
+      :key="i"
+      class="news-item"
+      :to="
+        n.player_id
+          ? '/detail/player/' + n.player_id
+          : {
+              path: '/compare/teams',
+              query: { team: n.team_a, opponent: n.team_b },
+            }
+      "
+      ><b>{{ n.kind }}</b
+      >{{ n.title }} ↗<small>{{
+        n.detail || new Date(n.at).toLocaleDateString("zh-CN")
+      }}</small></RouterLink
+    >
+  </section>
   <section class="section">
     <div class="section-heading">
       <div>

@@ -5,6 +5,8 @@ import { PGlite } from "@electric-sql/pglite";
 import {
   profileUrl,
   parseProfile,
+  lookupUrl,
+  searchPlayers,
 } from "../supabase/functions/atlas-vlr-preview/profile.mjs";
 import { sourceProposal } from "../src/lib/admin.js";
 const owner = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
@@ -40,7 +42,7 @@ test("VLR accepts only a player URL and matches identity and current team before
     undefined,
   );
 });
-test("owner-only RPCs reject other identities, serialize stale edits and log only committed changes", async () => {
+test("owner delegates and revokes; editors publish and moderate but cannot grant; stale or duplicate updates leave no changes", async () => {
   const db = new PGlite();
   try {
     await db.exec(`create role anon;create role authenticated;create schema auth;create schema atlas_private;
@@ -48,7 +50,7 @@ test("owner-only RPCs reject other identities, serialize stale edits and log onl
  create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
  grant usage on schema auth,atlas_private to authenticated;
  create table public.atlas_profiles(id uuid primary key,display_name text);
- create table public.atlas_catalog(id int primary key,content jsonb);
+ create table public.atlas_comments(id uuid primary key,target text);\n create table public.atlas_catalog(id int primary key,content jsonb);
  create function atlas_private.is_member() returns boolean language sql stable security definer set search_path='' as $$select exists(select 1 from auth.users where id=auth.uid() and email_confirmed_at is not null)$$;
  insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values('${owner}','owner@example.org',now(),'{}'),('${member}','member@example.org',now(),'{"role":"admin"}');
  insert into public.atlas_catalog values(1,'{"player":[{"player_id":1,"ign":"A","team_id":2,"bio":"old"}],"team":[{"team_id":2}],"other":[1]}');`);
@@ -56,6 +58,15 @@ test("owner-only RPCs reject other identities, serialize stale edits and log onl
       await readFile(
         new URL(
           "../supabase/migrations/20261108134330_admin_console.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/20261108140747_admin_operations.sql",
           import.meta.url,
         ),
         "utf8",
@@ -120,6 +131,73 @@ test("owner-only RPCs reject other identities, serialize stale edits and log onl
     assert.equal(doc.player[0].bio, "new");
     assert.deepEqual(doc.other, [1]);
     await db.exec(
+      `update public.atlas_catalog set content=jsonb_set(content,'{team}','[{"team_id":2,"team_name":"Alpha"},{"team_id":3,"team_name":"Beta"}]'); insert into public.atlas_comments values('${owner}','player:1');set role authenticated;set request.jwt.claim.sub='${member}'`,
+    );
+    const add =
+      "select public.atlas_add_match(2,3,2,1,'2025-03-04','Open','Final',null)";
+    const del = `select public.atlas_remove_comment('${owner}','辱骂')`;
+    const grant = "select public.atlas_set_editor('" + member + "',true)";
+    for (const q of [
+      add,
+      del,
+      grant,
+      "select public.atlas_operation_history()",
+    ])
+      await assert.rejects(db.query(q), (e) => e.code === "42501");
+    await db.exec(`set request.jwt.claim.sub='${owner}'`);
+    await db.query(grant);
+    await assert.rejects(
+      db.query(`select public.atlas_set_editor('${owner}',false)`),
+      /PROTECTED_OWNER/,
+    );
+    assert.equal(
+      (
+        await db.query("select public.atlas_admin_users(0) d")
+      ).rows[0].d.rows.find((u) => u.id === member).role,
+      "admin",
+    );
+    await db.exec(`set request.jwt.claim.sub='${member}'`);
+    assert.equal(
+      (await db.query("select public.atlas_is_admin() a")).rows[0].a,
+      true,
+    );
+    for (const q of [
+      grant,
+      "select public.atlas_admin_users(0)",
+      "select * from atlas_private.editors",
+    ])
+      await assert.rejects(db.query(q), (e) => e.code === "42501");
+    await assert.rejects(
+      db.query(add.replace("2,3,2,1", "2,2,2,1")),
+      /INVALID_MATCH/,
+    );
+    await db.query(add);
+    await assert.rejects(db.query(add), /DUPLICATE_MATCH/);
+    await db.query(
+      `select public.atlas_publish_player(1,'{"team_id":2}','{"team_id":3}')`,
+    );
+    await db.query(del);
+    await assert.rejects(db.query(del), /COMMENT_GONE/);
+    await db.exec("reset role");
+    const changed = (await db.query("select content from public.atlas_catalog"))
+      .rows[0].content;
+    assert.equal(changed.news.length, 2);
+    assert.match(changed.news[0].title, /Alpha → Beta/);
+    assert.equal(changed.team_matches[0].score_a, 2);
+    assert.equal(changed.team_matches[0].id, -1);
+    assert.equal(
+      (await db.query("select count(*)::int n from public.atlas_comments"))
+        .rows[0].n,
+      0,
+    );
+    await db.exec(
+      `set role authenticated;set request.jwt.claim.sub='${owner}'`,
+    );
+    await db.query(`select public.atlas_set_editor('${member}',false)`);
+    await db.exec(`set request.jwt.claim.sub='${member}'`);
+    await assert.rejects(db.query(add), (e) => e.code === "42501");
+    await db.exec(`reset role;set request.jwt.claim.sub='${owner}'`);
+    await db.exec(
       `update auth.users set banned_until=now()+interval '1 hour' where id='${owner}'; set role authenticated`,
     );
     assert.equal(
@@ -129,4 +207,31 @@ test("owner-only RPCs reject other identities, serialize stale edits and log onl
   } finally {
     await db.close();
   }
+});
+
+test("Smoggy search links resolve to distinct players, never to arbitrary upstream hosts", () => {
+  const search = "https://www.vlr.gg/search/?q=Smoggy";
+  assert.equal(lookupUrl(search), search);
+  assert.equal(
+    lookupUrl("vlr.gg/player/4742/smoggy/?tab=overview"),
+    "https://www.vlr.gg/player/4742/smoggy",
+  );
+  for (const invalid of [
+    "https://vlr.gg.evil.net/search/?q=x",
+    "https://www.vlr.gg@evil.net/search/?q=x",
+    "https://www.vlr.gg/team/5/test",
+  ])
+    assert.equal(lookupUrl(invalid), null);
+  const html = [4742, 5985]
+    .map(
+      (id) =>
+        '<a href="/search/r/player/' +
+        id +
+        '/idx"><div class="search-item-title">Smoggy</div></a>',
+    )
+    .join("");
+  assert.deepEqual(
+    searchPlayers(html).map((r) => r.url),
+    [4742, 5985].map((id) => "https://www.vlr.gg/player/" + id + "/smoggy"),
+  );
 });

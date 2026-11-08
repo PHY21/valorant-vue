@@ -1,4 +1,4 @@
-import { profileUrl, parseProfile } from "./profile.mjs";
+import { lookupUrl, searchPlayers, parseProfile } from "./profile.mjs";
 const headers = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -32,14 +32,38 @@ Deno.serve(async (req: Request) => {
     if (!verify.ok || (await verify.json()) !== true)
       return response({ error: "仅管理员可同步资料" }, 403);
     const body = await req.json().catch(() => null),
-      url = profileUrl(body?.url);
+      url = lookupUrl(body?.url);
     if (!url)
-      return response({ error: "请输入完整的 VLR.gg 选手资料页地址" }, 400);
-    const upstream = await fetch(url, {
-      redirect: "manual",
-      headers: { Accept: "text/html" },
-      signal: AbortSignal.timeout(12000),
-    });
+      return response(
+        {
+          error: "请输入 VLR.gg 的选手搜索页或资料页网址（比赛和战队页不适用）",
+        },
+        400,
+      );
+    let target = url;
+    const read = (target: string) =>
+      fetch(target, {
+        redirect: "manual",
+        headers: { Accept: "text/html" },
+        signal: AbortSignal.timeout(12000),
+      });
+    let upstream = await read(target);
+    for (
+      let i = 0;
+      i < 2 && upstream.status >= 300 && upstream.status < 400;
+      i++
+    ) {
+      const loc = upstream.headers.get("location");
+      const next = loc && lookupUrl(new URL(loc, target).href);
+      if (
+        !next ||
+        target.includes("/search/?") ||
+        next.split("/")[4] !== url.split("/")[4]
+      )
+        break;
+      target = next;
+      upstream = await read(target);
+    }
     if (
       !upstream.ok ||
       !upstream.headers.get("content-type")?.includes("text/html")
@@ -50,6 +74,8 @@ Deno.serve(async (req: Request) => {
       );
     const html = await upstream.text();
     if (html.length > 2000000) return response({ error: "来源页面异常" }, 502);
+    if (url.includes("/search/?"))
+      return response({ candidates: searchPlayers(html) });
     return response(parseProfile(html, url));
   } catch {
     return response({ error: "无法读取或识别来源页，本次没有修改资料。" }, 502);

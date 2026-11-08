@@ -48,6 +48,12 @@ export function adminError(error) {
   if (error?.code === "42501") return "当前账号没有管理权限。";
   if (error?.message?.includes("STALE_PLAYER"))
     return "这份资料刚被更新。请刷新资料，重新核对差异。";
+  if (error?.message?.includes("DUPLICATE_MATCH"))
+    return "该场比赛已经收录，请勿重复发布。";
+  if (error?.message?.includes("COMMENT_GONE"))
+    return "这条评论已被删除，请刷新列表。";
+  if (error?.message?.includes("PROTECTED_OWNER"))
+    return "站长权限不能通过后台更改。";
   if (/INVALID_|UNKNOWN_/.test(error?.message || ""))
     return "资料值无效，请核对后再发布。";
   return "操作未完成，请检查网络并刷新记录后再试。";

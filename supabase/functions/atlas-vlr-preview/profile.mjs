@@ -69,3 +69,42 @@ export function parseProfile(html, url) {
     teams,
   };
 }
+
+export function lookupUrl(raw) {
+  if (typeof raw !== "string" || raw.length > 512) return null;
+  const s = raw.trim().replace(/^(?=(?:www\.)?vlr\.gg\/)/i, "https://");
+  const m =
+    /^https:\/\/(?:www\.)?vlr\.gg(\/[^?#]*)(?:\?([^#]*))?(?:#.*)?$/i.exec(s);
+  if (!m) return null;
+  if (/^\/search\/?$/i.test(m[1])) {
+    const q = new URLSearchParams(m[2]).get("q")?.trim();
+    return q && q.length <= 64
+      ? "https://www.vlr.gg/search/?q=" + encodeURIComponent(q)
+      : null;
+  }
+  const short = /^\/(?:search\/r\/)?player\/([1-9]\d{0,9})(?:\/idx)?\/?$/.exec(
+    m[1],
+  );
+  return short
+    ? "https://www.vlr.gg/player/" + short[1] + "/idx"
+    : profileUrl("https://www.vlr.gg" + m[1]);
+}
+export function searchPlayers(html) {
+  const results = new Map();
+  for (const m of html.matchAll(
+    /<a\b[^>]*href="\/(?:search\/r\/)?player\/([1-9]\d{0,9})\/[^"]+"[^>]*>([\s\S]*?)<\/a>/gi,
+  )) {
+    const ign = plain(
+      m[2].match(/class="search-item-title[^"]*"[^>]*>([\s\S]*?)<\/div>/i)?.[1],
+    );
+    if (!ign) continue;
+    const slug = ign.toLowerCase().replace(/[^a-z0-9_-]+/g, "-") || "idx";
+    results.set(m[1], {
+      ign,
+      id: m[1],
+      url: "https://www.vlr.gg/player/" + m[1] + "/" + slug,
+    });
+    if (results.size >= 20) break;
+  }
+  return [...results.values()];
+}

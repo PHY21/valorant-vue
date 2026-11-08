@@ -126,7 +126,7 @@ function region(t) {
             <tr v-for="m in history" :key="m.id">
               <td>{{ m.date }}</td>
               <td>
-                {{ tournaments.get(m.tournament_id)
+                {{ m.event_name || tournaments.get(m.tournament_id)
                 }}<small>{{ m.stage }}</small>
               </td>
               <td class="map-score">{{ m.leftScore }} : {{ m.rightScore }}</td>
@@ -137,12 +137,13 @@ function region(t) {
               </td>
               <td>
                 <a
+                  v-if="m.id > 0"
                   :href="'https://www.vlr.gg/' + m.id"
                   target="_blank"
                   rel="noopener noreferrer"
                   :aria-label="m.date + ' 比赛原始记录'"
                   >VLR.gg ↗</a
-                >
+                ><span v-else>后台录入</span>
               </td>
             </tr>
           </tbody>
@@ -155,7 +156,8 @@ function region(t) {
       <p class="method-note">
         收录 2024–2026 年 VCT
         四大赛区启点赛、两个赛段、大师赛和全球冠军赛中，双方均在本站图鉴且有明确比分的系列赛。比分表示各自赢下的地图数，日期按
-        VLR.gg 赛程页记录。
+        VLR.gg
+        赛程页记录。后台补录的已结束比赛也计入统计；没有来源链接的场次标为「后台录入」。
       </p>
     </section>
     <section class="section">

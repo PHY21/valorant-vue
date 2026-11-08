@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, nextTick, onMounted } from "vue";
 import { supabase } from "../lib/supabase";
 import {
   adminError,
@@ -10,6 +10,8 @@ import {
   statuses,
 } from "../lib/admin";
 import { useCatalog } from "../stores/catalog";
+import AdminMatch from "../components/AdminMatch.vue";
+import AdminModeration from "../components/AdminModeration.vue";
 import PageHeading from "../components/PageHeading.vue";
 const catalog = useCatalog();
 const tab = ref("players"),
@@ -41,6 +43,23 @@ const users = ref([]),
   page = ref(0),
   total = ref(0),
   history = ref([]);
+const candidates = ref([]),
+  fetched = ref(null),
+  reviewEl = ref(null),
+  owner = ref(false),
+  pendingRole = ref(null),
+  operations = ref([]);
+onMounted(async () => {
+  const { data } = await supabase.rpc("atlas_is_owner");
+  owner.value = data === true;
+});
+const liveChanges = computed(() =>
+  base.value ? differences(base.value, draft.value) : [],
+);
+async function showReview() {
+  await nextTick();
+  reviewEl.value?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 const directoryStatus = {
   verified: "邮箱已验证",
   pending: "待验证邮箱",
@@ -50,6 +69,8 @@ const directoryStatus = {
 function resetEditor() {
   const p = entries.value.find((row) => row.player_id === selected.value);
   if (!p) return;
+  candidates.value = [];
+  fetched.value = null;
   base.value = { ...p };
   draft.value = Object.fromEntries(
     Object.keys(labels)
@@ -79,16 +100,20 @@ function preview(values, from = null) {
   review.value = changes;
   accepted.value = changes.map((c) => c.key);
   source.value = from;
+  showReview();
   message.value = changes.length ? "" : "资料一致，没有需要发布的修改。";
 }
-async function sync() {
+async function sync(input = url.value) {
+  fetched.value = null;
+  review.value = [];
+  accepted.value = [];
   busy.value = true;
   message.value = "";
   note.value = "";
   try {
     const { data, error } = await supabase.functions.invoke(
       "atlas-vlr-preview",
-      { body: { url: url.value.trim() } },
+      { body: { url: input.trim() } },
     );
     if (error) {
       const detail = await error.context?.json?.().catch(() => null);
@@ -96,11 +121,37 @@ async function sync() {
         detail?.error || "暂时无法读取 VLR，请检查资料页地址或稍后再试。",
       );
     }
+    if (Array.isArray(data.candidates)) {
+      candidates.value = data.candidates;
+      message.value = candidates.value.length
+        ? "找到 " +
+          candidates.value.length +
+          " 个候选人。请核对编号或打开原页，再选择要预览的人。"
+        : "搜索结果中没有选手。请换一个比赛 ID，或粘贴选手资料页。";
+      return;
+    }
+    if (base.value.ign.toLowerCase() !== data.ign.toLowerCase()) {
+      const matches = entries.value.filter(
+        (p) => p.ign.toLowerCase() === data.ign.toLowerCase(),
+      );
+      if (matches.length !== 1)
+        throw Error(
+          "VLR 返回了 " +
+            data.ign +
+            "，本站没有唯一对应的选手。请核对来源和选手。",
+        );
+      const choices = candidates.value;
+      selected.value = matches[0].player_id;
+      await nextTick();
+      candidates.value = choices;
+    }
     const { values, note: warning } = sourceProposal(
       base.value,
       data,
       catalog.data.team,
     );
+    fetched.value = data;
+    url.value = data.url;
     note.value = warning;
     preview(values, data.url);
   } catch (err) {
@@ -141,7 +192,8 @@ async function openTab(name, num = 0) {
   tab.value = name;
   message.value = "";
   note.value = "";
-  if (name === "players") return;
+  pendingRole.value = null;
+  if (!["users", "history"].includes(name)) return;
   busy.value = true;
   try {
     if (name === "users") {
@@ -158,11 +210,38 @@ async function openTab(name, num = 0) {
       const { data, error } = await supabase.rpc("atlas_admin_history");
       if (error) throw error;
       history.value = data;
+      const ops = await supabase.rpc("atlas_operation_history");
+      if (ops.error) throw ops.error;
+      operations.value = ops.data;
     }
   } catch (err) {
     message.value = adminError(err);
   } finally {
     busy.value = false;
+  }
+}
+async function setRole() {
+  const u = pendingRole.value;
+  if (!u || busy.value) return;
+  busy.value = true;
+  try {
+    const { error } = await supabase.rpc("atlas_set_editor", {
+      target_id: u.id,
+      enabled: u.role !== "admin",
+    });
+    if (error) throw error;
+    busy.value = false;
+    await openTab("users", page.value);
+    if (!message.value)
+      message.value =
+        u.role === "admin"
+          ? "已撤销管理权限。"
+          : "已授予管理权限，对方刷新网站后即可进入后台。";
+  } catch (e) {
+    message.value = adminError(e);
+  } finally {
+    busy.value = false;
+    pendingRole.value = null;
   }
 }
 function date(value) {
@@ -175,13 +254,15 @@ function date(value) {
   <PageHeading
     eyebrow="SITE ADMIN"
     title="网站管理"
-    description="审核选手资料、查看用户权限和发布记录。"
+    description="发布比赛和转会动态，核对选手资料，处理社区评论。"
   />
   <div class="admin-tabs" aria-label="管理栏目">
     <button
       v-for="[key, title] in [
-        ['players', '选手资料'],
-        ['users', '用户与权限'],
+        ['players', '选手与转会'],
+        ['matches', '录入赛果'],
+        ['comments', '评论管理'],
+        ...(owner ? [['users', '用户与权限']] : []),
         ['history', '修改记录'],
       ]"
       :key="key"
@@ -216,13 +297,24 @@ function date(value) {
       </div>
       <h2>从 VLR 同步</h2>
       <label
-        >选手资料页<input
+        >VLR 搜索页或选手资料页<input
           v-model="url"
-          type="url"
+          type="text"
+          @input="
+            candidates = [];
+            fetched = null;
+          "
           placeholder="https://www.vlr.gg/player/编号/选手名"
       /></label>
       <div class="admin-actions">
-        <button class="btn" :disabled="!url.trim()" @click="sync">
+        <button
+          class="btn"
+          :disabled="!url.trim()"
+          @click="
+            candidates = [];
+            sync();
+          "
+        >
           拉取并预览
         </button>
         <a
@@ -232,11 +324,21 @@ function date(value) {
           >在 VLR 查找 {{ base.ign }} ↗</a
         >
       </div>
+      <div v-if="candidates.length" class="candidate-list">
+        <div v-for="c in candidates" :key="c.id">
+          <b>{{ c.ign }}</b> · VLR #{{ c.id }}
+          <a :href="c.url" target="_blank" rel="noopener noreferrer"
+            >查看资料 ↗</a
+          >
+          <button class="btn secondary" @click="sync(c.url)">预览此人</button>
+        </div>
+      </div>
       <details>
-        <summary>手动编辑选手资料</summary>
+        <summary>手动编辑 / 登记转会</summary>
         <form
           @submit.prevent="
             note = '';
+            fetched = null;
             preview(draft);
           "
         >
@@ -246,7 +348,7 @@ function date(value) {
               }}<input v-model.trim="draft[k]" required maxlength="120"
             /></label>
             <label
-              >所属战队<select v-model="draft.team_id">
+              >所属战队<select aria-label="所属战队" v-model="draft.team_id">
                 <option :value="null">无所属战队</option>
                 <option
                   v-for="t in catalog.data.team"
@@ -275,69 +377,100 @@ function date(value) {
               maxlength="4000"
             ></textarea>
           </label>
-          <button class="btn secondary">预览手动修改</button>
+          <div v-if="liveChanges.length" aria-live="polite">
+            <h3>
+              你正在修改 {{ base.ign }} 的 {{ liveChanges.length }} 项资料
+            </h3>
+            <p v-for="c in liveChanges" :key="c.key">
+              {{ labels[c.key] }}：{{ valueText(c.key, c.before) }} →
+              <b>{{ valueText(c.key, c.after) }}</b>
+            </p>
+          </div>
+          <p class="caption">更改所属战队并发布后，首页会同时出现转会动态。</p>
+          <button class="btn secondary" :disabled="!liveChanges.length">
+            预览手动修改
+          </button>
         </form>
       </details>
     </fieldset>
-    <p v-if="note" class="notice">{{ note }}</p>
-    <div v-if="review.length" class="admin-review">
-      <h2>审核 {{ base.ign }} 的修改</h2>
-      <a v-if="source" :href="source" target="_blank" rel="noopener noreferrer"
-        >核对 VLR 原始资料 ↗</a
-      >
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>发布字段</th>
-              <th>当前值</th>
-              <th>候选值</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="c in review" :key="c.key">
-              <th>
-                <label class="check-field"
-                  ><input
-                    type="checkbox"
-                    v-model="accepted"
-                    :disabled="busy"
-                    :value="c.key"
-                  />{{ labels[c.key] }}</label
-                >
-              </th>
-              <td>{{ valueText(c.key, c.before) }}</td>
-              <td>{{ valueText(c.key, c.after) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="admin-actions">
-        <button
-          class="btn"
-          :disabled="busy || !accepted.length"
-          @click="publish"
+    <div ref="reviewEl" aria-live="polite">
+      <p v-if="fetched" class="notice">
+        <b>已读取 {{ fetched.ign }}</b> ·
+        {{ fetched.real_name || "未列姓名" }} ·
+        {{ fetched.nationality || "未列地区" }} ·
+        {{ fetched.teams.join("、") || "未列战队" }}。{{
+          review.length
+            ? "下方列出与本站不同的字段。"
+            : "与本站可核对的字段一致。"
+        }}
+      </p>
+      <p v-if="note" class="notice">{{ note }}</p>
+      <div v-if="review.length" class="admin-review">
+        <h2>{{ base.ign }} · 共 {{ review.length }} 项差异</h2>
+        <a
+          v-if="source"
+          :href="source"
+          target="_blank"
+          rel="noopener noreferrer"
+          >核对 VLR 原始资料 ↗</a
         >
-          发布选中的 {{ accepted.length }} 项修改
-        </button>
-        <button
-          class="btn secondary"
-          :disabled="busy"
-          @click="
-            review = [];
-            message = '';
-            note = '';
-          "
-        >
-          取消预览
-        </button>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>发布字段</th>
+                <th>修改前（本站）</th>
+                <th>修改后（待发布）</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="c in review" :key="c.key">
+                <th>
+                  <label class="check-field"
+                    ><input
+                      type="checkbox"
+                      v-model="accepted"
+                      :disabled="busy"
+                      :value="c.key"
+                    />{{ labels[c.key] }}</label
+                  >
+                </th>
+                <td>{{ valueText(c.key, c.before) }}</td>
+                <td>{{ valueText(c.key, c.after) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-actions">
+          <button
+            class="btn"
+            :disabled="busy || !accepted.length"
+            @click="publish"
+          >
+            发布选中的 {{ accepted.length }} 项修改
+          </button>
+          <button
+            class="btn secondary"
+            :disabled="busy"
+            @click="
+              review = [];
+              fetched = null;
+              message = '';
+              note = '';
+            "
+          >
+            取消预览
+          </button>
+        </div>
       </div>
     </div>
   </section>
+  <AdminMatch v-else-if="tab === 'matches'" />
+  <AdminModeration v-else-if="tab === 'comments'" />
   <section v-else-if="tab === 'users'" class="panel admin-panel">
     <h2>用户与权限</h2>
     <p>
-      已验证会员可以浏览图鉴、收藏和管理自己的评价。管理员还可以发布选手资料、查看账号状态与修改记录。
+      已验证会员可以浏览图鉴、收藏和管理自己的评价。管理员可维护赛果、选手和评论；只有站长可以任免管理员。
     </p>
     <div class="table-wrap">
       <table>
@@ -347,6 +480,7 @@ function date(value) {
             <th>角色</th>
             <th>账号状态</th>
             <th>最近登录</th>
+            <th>授权</th>
           </tr>
         </thead>
         <tbody>
@@ -357,17 +491,49 @@ function date(value) {
             <td>
               {{
                 u.role === "owner"
-                  ? "管理员"
-                  : u.status === "verified"
-                    ? "会员"
-                    : "普通账号"
+                  ? "站长"
+                  : u.role === "admin"
+                    ? "管理员"
+                    : u.status === "verified"
+                      ? "会员"
+                      : "普通账号"
               }}
             </td>
             <td>{{ directoryStatus[u.status] }}</td>
             <td>{{ date(u.last_sign_in_at) }}</td>
+            <td>
+              <button
+                v-if="
+                  u.role !== 'owner' &&
+                  (u.status === 'verified' || u.role === 'admin')
+                "
+                class="btn secondary"
+                :disabled="busy"
+                @click="pendingRole = u"
+              >
+                {{ u.role === "admin" ? "撤销管理权限" : "设为管理员" }}
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
+    </div>
+    <div v-if="pendingRole" class="notice" role="group">
+      <p>
+        确认{{ pendingRole.role === "admin" ? "撤销" : "授予" }}
+        {{ pendingRole.display_name }}（{{ pendingRole.email_hint }} ·
+        {{ pendingRole.id.slice(0, 8) }}）的管理员权限？
+      </p>
+      <button class="btn" :disabled="busy" @click="setRole">
+        确认{{ pendingRole.role === "admin" ? "撤销" : "授权" }}
+      </button>
+      <button
+        class="btn secondary"
+        :disabled="busy"
+        @click="pendingRole = null"
+      >
+        取消
+      </button>
     </div>
     <div class="admin-actions">
       <button
@@ -387,7 +553,13 @@ function date(value) {
     </div>
   </section>
   <section v-else-if="tab === 'history'" class="panel admin-panel">
-    <h2>最近 50 次发布</h2>
+    <h2>比赛、授权与评论处理记录</h2>
+    <p v-if="!operations.length">暂无记录。</p>
+    <p v-for="o in operations" :key="o.id">
+      <b>{{ o.action }}</b> · {{ o.detail }}
+      <small>{{ date(o.created_at) }} · {{ o.actor_name }}</small>
+    </p>
+    <h2>最近 50 次选手资料发布</h2>
     <p v-if="!busy && !history.length && !message">还没有发布记录。</p>
     <details v-for="log in history" :key="log.id">
       <summary>
@@ -410,6 +582,13 @@ function date(value) {
   <p v-if="busy" role="status">正在处理，请稍候…</p>
 </template>
 <style scoped>
+.candidate-list > div {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.candidate-list a {
+  margin: 0 10px;
+}
 .admin-tabs,
 .admin-actions {
   display: flex;
