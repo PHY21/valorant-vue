@@ -1,0 +1,4 @@
+interface:
+  display_name: "PHP 课程网站升级为 Vue 3 在线作品"
+  short_description: "保留原 PHP 作业，将数据和交互迁入 Vue 3，并核验线上演示"
+  default_prompt: "使用 $php-to-vue-demo 检查我的 PHP 课程项目，保留原版并完成 Vue 3 在线演示。"
