@@ -127,7 +127,7 @@ function region(t) {
               <td>{{ m.date }}</td>
               <td>
                 {{ m.event_name || tournaments.get(m.tournament_id)
-                }}<small>{{ m.stage }}</small>
+                }}<small>{{ m.stage }}{{ m.revision ? " · 比分已更正" : "" }}</small>
               </td>
               <td class="map-score">{{ m.leftScore }} : {{ m.rightScore }}</td>
               <td>

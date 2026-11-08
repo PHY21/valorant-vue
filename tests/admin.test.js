@@ -83,6 +83,15 @@ test("owner delegates and revokes; editors publish and moderate but cannot grant
       ),
     );
     await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/20261108150636_correct_match_score.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    await db.exec(
       `insert into atlas_private.admin_owner(user_id) values('${owner}'); set role anon;`,
     );
     await assert.rejects(
@@ -145,10 +154,13 @@ test("owner delegates and revokes; editors publish and moderate but cannot grant
     );
     const add =
       "select public.atlas_add_match(2,3,2,1,'2025-03-04','Open','Final',null)";
+    const correct =
+      "select public.atlas_correct_match(-1,2,1,0,1,2,'比分填反') as recipients";
     const del = `select public.atlas_remove_comment('${owner}','辱骂')`;
     const grant = "select public.atlas_set_editor('" + member + "',true)";
     for (const q of [
       add,
+      correct,
       del,
       grant,
       "select public.atlas_operation_history()",
@@ -244,6 +256,49 @@ test("owner delegates and revokes; editors publish and moderate but cannot grant
     await db.exec(
       `set role authenticated;set request.jwt.claim.sub='${owner}'`,
     );
+    // A new follower should not receive a correction to someone else's earlier notification.
+    await db.exec(
+      "insert into public.atlas_follows(kind,target_id) values ('team',2)",
+    );
+    await db.exec(
+      `set request.jwt.claim.sub='${member}';delete from public.atlas_follows where kind='team'`,
+    );
+    await assert.rejects(
+      db.query(correct.replace("0,1,2", "0,1,1")),
+      /INVALID_CORRECTION/,
+    );
+    await assert.rejects(
+      db.query(correct.replace("0,1,2", "0,2,1")),
+      /UNCHANGED_SCORE/,
+    );
+    assert.equal((await db.query(correct)).rows[0].recipients, 1);
+    await assert.rejects(db.query(correct), /STALE_MATCH/);
+    const corrected = (await inbox()).rows;
+    assert.equal(corrected.length, 3);
+    assert.equal(corrected[0].is_read, true);
+    assert.match(corrected[0].event.superseded_by, /Alpha 1 : 2 Beta/);
+    assert.equal(corrected[2].is_read, false);
+    assert.equal(corrected[2].event.kind, "赛果更正");
+    assert.match(corrected[2].event.detail, /2 : 1 → 1 : 2.*比分填反/);
+    await db.exec("reset role");
+    const correctedDoc = (
+      await db.query("select content from public.atlas_catalog")
+    ).rows[0].content;
+    assert.equal(correctedDoc.team_matches.length, 1);
+    assert.deepEqual(
+      [
+        correctedDoc.team_matches[0].score_a,
+        correctedDoc.team_matches[0].score_b,
+        correctedDoc.team_matches[0].revision,
+      ],
+      [1, 2, 1],
+    );
+    assert.equal(correctedDoc.news[0].kind, "赛果更正");
+    assert.ok(!correctedDoc.news.some((row) => row.kind === "赛果"));
+    await db.exec(
+      `set role authenticated;set request.jwt.claim.sub='${owner}'`,
+    );
+    assert.equal((await inbox()).rows.length, 0);
     await db.query(`select public.atlas_set_editor('${member}',false)`);
     await db.exec(`set request.jwt.claim.sub='${member}'`);
     await assert.rejects(db.query(add), (e) => e.code === "42501");

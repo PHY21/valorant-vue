@@ -3,6 +3,8 @@ import { ref, computed } from "vue";
 import { useCatalog } from "../stores/catalog";
 import { supabase } from "../lib/supabase";
 import { adminError } from "../lib/admin";
+import MatchCorrection from "./MatchCorrection.vue";
+const mode = ref("add");
 const catalog = useCatalog();
 const teams = computed(() => catalog.data.team),
   teamName = (id) => teams.value.find((t) => t.team_id === id)?.team_name;
@@ -62,7 +64,22 @@ async function save() {
 }
 </script>
 <template>
-  <section class="panel ops">
+  <div class="segmented" aria-label="赛果管理">
+    <button
+      v-for="[key, name] in [
+        ['add', '录入新赛果'],
+        ['correct', '赛果纠错'],
+      ]"
+      :key="key"
+      :class="{ selected: mode === key }"
+      :aria-pressed="mode === key"
+      @click="mode = key"
+    >
+      {{ name }}
+    </button>
+  </div>
+  <MatchCorrection v-if="mode === 'correct'" />
+  <section v-show="mode === 'add'" class="panel ops">
     <h2>录入已结束比赛</h2>
     <p class="caption">填入系列赛最终比分；发布前可以先核对对阵和获胜方。</p>
     <form @submit.prevent="review">
@@ -80,7 +97,8 @@ async function save() {
             >赛事名称<input
               required
               maxlength="120"
-              aria-label="赛事名称" list="events"
+              aria-label="赛事名称"
+              list="events"
               v-model.trim="form.event_name"
               placeholder="选择已有赛事或输入新赛事" /><datalist id="events">
               <option
@@ -110,7 +128,11 @@ async function save() {
           >
             <label
               >战队 {{ title
-              }}<select :aria-label="'战队 '+title" required v-model="form[side]">
+              }}<select
+                :aria-label="'战队 ' + title"
+                required
+                v-model="form[side]"
+              >
                 <option disabled :value="null">选择战队</option>
                 <option v-for="t in teams" :key="t.team_id" :value="t.team_id">
                   {{ t.team_name }}

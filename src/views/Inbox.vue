@@ -57,6 +57,9 @@ function openMessage(message) {
             >{{ m.event.title }} ↗</RouterLink
           >
         </h2>
+        <p v-if="m.event.superseded_by" class="notice">
+          这条比分记录已更正。最新比分为 {{ m.event.superseded_by }}。
+        </p>
         <p v-if="m.event.detail">{{ m.event.detail }}</p>
         <button
           v-if="!m.is_read"
