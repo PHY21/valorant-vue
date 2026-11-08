@@ -42,6 +42,7 @@ const placements = computed(() =>
   ),
 );
 const target = computed(() => `${kind.value}:${id.value}`);
+const saved = computed(() => (kind.value === "team" ? s.teamFavorites : s.favorites).includes(id.value));
 </script>
 <template>
   <RouterLink :to="'/explore/' + kind" class="back-link"
@@ -75,17 +76,17 @@ const target = computed(() => `${kind.value}:${id.value}`);
           class="tag"
           >{{ team.team_name }} ↗</RouterLink
         >
-        <div v-if="kind === 'player'" class="detail-actions">
+        <div v-if="kind === 'player' || kind === 'team'" class="detail-actions">
           <button
             class="btn secondary"
-            :aria-pressed="s.favorites.includes(id)"
-            @click="s.toggle(id)"
+            :aria-pressed="saved"
+            @click="s.toggle(id, kind)"
           >
             <Heart :size="16" />{{
-              s.favorites.includes(id) ? "已收藏" : "收藏选手"
+              saved ? "取消收藏" : kind === "team" ? "收藏战队" : "收藏选手"
             }}</button
-          ><RouterLink :to="'/compare?player=' + id" class="btn"
-            ><GitCompareArrows :size="16" />对比选手</RouterLink
+          ><RouterLink :to="kind === 'team' ? '/compare/teams?team=' + id : '/compare?player=' + id" class="btn"
+            ><GitCompareArrows :size="16" />{{ kind === "team" ? "对比战队" : "对比选手" }}</RouterLink
           >
         </div>
       </div>

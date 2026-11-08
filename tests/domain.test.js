@@ -72,13 +72,15 @@ test("ranking excludes small samples, aggregates each player, and honors tournam
 test("missing stats stay unavailable instead of invented zero", () =>
   assert.equal(compareStats([], 1), null));
 test("corrupt or wrong-shaped saved state recovers to defaults", () => {
-  assert.deepEqual(readSaved("{broken"), { favorites: [], comments: [] });
+  assert.deepEqual(readSaved("{broken"), { favorites: [], teamFavorites: [], comments: [] });
   assert.deepEqual(readSaved('{"favorites":null,"comments":"x"}'), {
     favorites: [],
+    teamFavorites: [],
     comments: [],
   });
   assert.deepEqual(readSaved('{"favorites":[1,"bad"],"comments":[null]}'), {
     favorites: [1],
+    teamFavorites: [],
     comments: [],
   });
 });

@@ -6,6 +6,7 @@ import { useCatalog } from "../stores/catalog";
 import { filterPlayers, number, catalogRows } from "../lib/domain";
 import PageHeading from "../components/PageHeading.vue";
 import PlayerCard from "../components/PlayerCard.vue";
+import TeamCard from "../components/TeamCard.vue";
 import AgentPortrait from "../components/AgentPortrait.vue";
 const s = useCatalog(),
   route = useRoute(),
@@ -182,35 +183,20 @@ watch([q, region, role, year, level], () => (page.value = 1));
     </div>
     <div v-else :class="kind === 'player' ? 'player-grid' : 'directory-grid'">
       <template v-for="item in visible" :key="item[kind + '_id']"
-        ><PlayerCard v-if="kind === 'player'" :player="item" /><RouterLink
+        ><PlayerCard v-if="kind === 'player'" :player="item" /><TeamCard v-else-if="kind === 'team'" :team="item" /><RouterLink
           v-else
           :to="`/detail/${kind}/${item[kind + '_id']}`"
           class="directory-card"
           :class="{ 'agent-card': kind === 'agent' }"
           ><AgentPortrait v-if="kind === 'agent'" :agent="item" />
           <div v-else class="directory-card-top">
-            <span class="tile-symbol" :class="kind">{{
-              kind === "team"
-                ? item.team_tag
-                : item.tournament_year
-            }}</span
+            <span class="tile-symbol" :class="kind">{{ item.tournament_year }}</span
             ><ArrowUpRight :size="20" />
           </div>
           <span class="eyebrow">{{
-            kind === "team"
-              ? s.data.region.find((r) => r.region_id === item.region_id)
-                  ?.region_code
-              : kind === "agent"
-                ? item.agent_role
-                : item.tournament_level
+            kind === "agent" ? item.agent_role : item.tournament_level
           }}</span>
           <h3>{{ item[kind + "_name"] }}</h3>
-          <p v-if="kind === 'team'">
-            {{
-              s.players.filter((p) => p.team_id === item.team_id).length
-            }}
-            名收录选手 · 成立于 {{ item.founded_year || "未知年份" }}
-          </p>
           <p v-if="kind === 'agent'">
             {{ item.origin }} · {{ item.description }}
           </p>

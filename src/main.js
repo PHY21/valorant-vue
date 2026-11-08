@@ -21,6 +21,7 @@ const router = createRouter({
     },
     { path: "/rankings", component: () => import("./views/Rankings.vue") },
     { path: "/compare", component: () => import("./views/Compare.vue") },
+    { path: "/compare/teams", component: () => import("./views/TeamCompare.vue") },
     { path: "/favorites", component: () => import("./views/Favorites.vue") },
     { path: "/about", component: () => import("./views/About.vue") },
     { path: "/login", component: () => import("./views/Account.vue") },

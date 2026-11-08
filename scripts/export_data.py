@@ -32,6 +32,7 @@ for name in allowed:
         rows.extend(dict(zip(columns,row,strict=True)) for row in tuples(insert.group(1)))
     data[name]=rows
 out=Path(__file__).resolve().parents[1]/'supabase/catalog.seed.json'
+data['team_matches']=json.loads(out.with_name('team-matches.json').read_text(encoding='utf8'))
 guides=json.loads(out.with_name('agent-guides.json').read_text(encoding='utf8'))
 for agent in data['agent']:
     slug=agent['agent_name'].lower().replace('/','-')

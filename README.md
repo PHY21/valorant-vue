@@ -11,6 +11,7 @@ Vue 3 电竞数据图鉴，从 PHP 数据库课程作业独立升级的前端求
 - 名称、赛区、定位、年份、级别组合筛选，查询条件同步 URL，列表分页。
 - Vue Router Hash 路由与按路由懒加载，支持静态部署及刷新深链接。
 - 按收录场次加权的 Rating、ACS、K/D 排行；双选手数据对比。
+- 支持选手和战队收藏。战队对比可查看直接交手的系列赛比分、日期、胜方及比赛原始页，以及两队对所有收录对手的战绩。
 - Pinia 管理数据、登录状态和本地收藏；localStorage 持久化与损坏状态恢复。
 - Supabase 邮箱密码注册、邮箱验证码验证、登录、退出、会话恢复及邮件找回密码；路由守卫和 Postgres RLS 限制未登录访问。部署与实际验收状态见 [在线账号部署](docs/在线账号部署.md)。
 - 响应式布局、手机导航、键盘跳转、空数据/异常链接/加载失败状态及图片回退。
@@ -58,6 +59,8 @@ python scripts/export_data.py "原项目/Valorant数据库_期末作业.sql"
 将原项目 `img/` 复制到 `public/img/` 即可复用照片。Vue 项目不需要运行 PHP 或 MySQL。修改后推送 `main`，Actions 会测试、构建并更新线上 Demo。
 
 ## 素材
+
+直接交手来自 [VLR.gg 2024](https://www.vlr.gg/vct-2024)、[2025](https://www.vlr.gg/vct-2025) 与 [2026 赛季](https://www.vlr.gg/vct-2026)的已完成比赛。快照保存在 `supabase/team-matches.json`，导出脚本将它合并到会员图鉴。每条记录的 `id` 对应 VLR.gg 比赛页。数据限本站 48 支战队之间具有明确数字比分的比赛。
 
 特工详情页的中文技能导览由本站将特工立绘、技能说明与 Riot Games 的四段技能演示剪辑而成，使用同站托管的 H.264 MP4。原版介绍视频保留为外部链接。技能卡优先播放官方演示，加载失败时切换到本站导览的对应时间段。各段官方素材地址见 [agent-guides.json](supabase/agent-guides.json)。
 

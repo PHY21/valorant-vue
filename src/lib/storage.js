@@ -5,6 +5,9 @@ export function readSaved(raw) {
       favorites: Array.isArray(x.favorites)
         ? [...new Set(x.favorites.filter(Number.isInteger))]
         : [],
+      teamFavorites: Array.isArray(x.teamFavorites)
+        ? [...new Set(x.teamFavorites.filter(Number.isInteger))]
+        : [],
       comments: Array.isArray(x.comments)
         ? x.comments.filter(
             (c) =>
@@ -21,6 +24,6 @@ export function readSaved(raw) {
         : [],
     };
   } catch {
-    return { favorites: [], comments: [] };
+    return { favorites: [], teamFavorites: [], comments: [] };
   }
 }

@@ -14,15 +14,17 @@ export const useCatalog = defineStore("catalog", () => {
     saved = readSaved(null);
   }
   const favorites = ref(saved.favorites),
+    teamFavorites = ref(saved.teamFavorites),
     comments = ref(saved.comments);
   watch(
-    [favorites, comments],
+    [favorites, teamFavorites, comments],
     () => {
       try {
         localStorage.setItem(
           "atlas-v1",
           JSON.stringify({
             favorites: favorites.value,
+            teamFavorites: teamFavorites.value,
             comments: comments.value,
           }),
         );
@@ -72,10 +74,11 @@ export const useCatalog = defineStore("catalog", () => {
         };
       }) || [],
   );
-  function toggle(id) {
-    favorites.value = favorites.value.includes(id)
-      ? favorites.value.filter((x) => x !== id)
-      : [...favorites.value, id];
+  function toggle(id, kind = "player") {
+    const list = kind === "team" ? teamFavorites : favorites;
+    list.value = list.value.includes(id)
+      ? list.value.filter((x) => x !== id)
+      : [...list.value, id];
   }
   function addComment(c) {
     comments.value.unshift({
@@ -95,6 +98,7 @@ export const useCatalog = defineStore("catalog", () => {
     load,
     clearData,
     favorites,
+    teamFavorites,
     comments,
     toggle,
     addComment,

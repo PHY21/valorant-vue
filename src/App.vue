@@ -35,6 +35,7 @@ const nav = [
   ["/explore/agent", "特工图鉴", Crosshair],
   ["/rankings", "数据排行榜", ChartNoAxesColumn],
   ["/compare", "选手对比", GitCompareArrows],
+  ["/compare/teams", "战队对比", GitCompareArrows],
   ["/favorites", "我的收藏", Heart],
 ];
 watch(
@@ -100,9 +101,9 @@ watch(
           :class="{ active: route.path === path }"
           ><component :is="Icon" :size="18" /><span>{{ label }}</span
           ><span
-            v-if="path === '/favorites' && store.favorites.length"
+            v-if="path === '/favorites' && store.favorites.length + store.teamFavorites.length"
             class="nav-count"
-            >{{ store.favorites.length }}</span
+            >{{ store.favorites.length + store.teamFavorites.length }}</span
           ></RouterLink
         >
       </nav>
