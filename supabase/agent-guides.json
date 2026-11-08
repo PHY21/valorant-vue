@@ -1,0 +1,756 @@
+{
+  "astra": [
+    {
+      "name": "新星脉冲",
+      "description": "先在星界形态放置星体，再引爆它。短暂蓄能后，范围内的玩家会受到震荡。可以提前把星体放在箱后，等队友准备探头时引爆。",
+      "english": "NOVA PULSE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/e54ed10355d571c15ef2ee5a0897cca06851fd56.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "星云",
+      "description": "把预先放置的星体变成球形烟幕，挡住一条交叉枪线。也可以回收星体，在原地留下片刻遮挡，为转点保留后续布烟的机会。",
+      "english": "NEBULA",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/2aafadb8cef8c1ab2894a657c23988e921b006c8.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "重力之阱",
+      "description": "激活星体会把周围玩家拉向中心，随后爆开，让仍在范围内的人陷入易伤。听到拆包声时使用，可以把敌人从爆能器旁拉开。",
+      "english": "GRAVITY WELL",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/3439c939846214067561746668bfd96805efc225.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "宇宙分裂",
+      "description": "进入星界视角后选定两点，决定巨墙横穿地图的方向。墙能挡住子弹并大幅削弱声音。进点前先看墙的两端，防止对手绕过来。",
+      "english": "ASTRAL FORM / COSMIC DIVIDE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/6bed3444d432f27cdac08f3be1dad2760be7052f.mp4?accountingTag=VAL"
+    }
+  ],
+  "breach": [
+    {
+      "name": "闪点爆破",
+      "description": "瞄准墙壁发射闪光装置，闪光从另一侧爆出，致盲看向它的玩家。出手前告诉队友闪光会从哪面墙出现，让队友背闪后进点。",
+      "english": "FLASHPOINT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/ffa4695b83e2f959bc59f0393dfc74e533546a89.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "山崩地陷",
+      "description": "按住开火键为震波蓄力，松开后震波沿直线穿过地形，震荡路径上的玩家。蓄力决定距离，适合隔墙为远处队友创造对枪机会。",
+      "english": "FAULT LINE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/a4f24e1fe60879234be5da0f8a768feb8f379fdd.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "剧震余波",
+      "description": "将聚变装置打入墙面，延迟后对墙另一侧的区域造成伤害。先找出掩体背后的藏身位，再封住对手逃离爆破区时必经的出口。",
+      "english": "AFTERSHOCK",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/592212ab60d09999d493c2099f9260d59fab917a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "惊雷卷地",
+      "description": "向前发出连续推进的地震，隔着掩体也能击飞并震荡敌人。队友应跟在震波后面推进，避免过早进入还没被波及的区域。",
+      "english": "ROLLING THUNDER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL"
+    }
+  ],
+  "brimstone": [
+    {
+      "name": "燃烧榴弹",
+      "description": "榴弹可借墙反弹，落稳后会铺开一片持续燃烧的区域。用它封入口或阻止拆包时，要把弹道飞行和反弹的时间也算进去。",
+      "english": "INCENDIARY",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/9df59d490062acceb7c6ca32a3650b55718381f7.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "空投烟幕",
+      "description": "打开战术地图标记落烟点，再确认投放。烟幕从上方落下，适合同时隔断多条枪线。把烟边缘对齐门框，减少敌人借烟探出的角度。",
+      "english": "SKY SMOKE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/8e0b72295747346b60c354765944f5233fb208f2.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "振奋信标",
+      "description": "把信标投到地面，覆盖区给队友提供战斗强化。准备一起冲出门口时，把信标放在集合处，让队友经过覆盖区后再展开阵形。",
+      "english": "STIM BEACON",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/da2d65e4abc2129e284cf5248fd70925f093a0b3.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "天基光束",
+      "description": "从战术地图指定目标区域，轨道光束会持续打击其中的玩家。可用来驱离拆包者，也可逼出躲在掩体后的敌人，提前架住撤退路线。",
+      "english": "ORBITAL STRIKE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ccd8e6c574b7017a2681e5d37c744f5a654327e3.mp4?accountingTag=VAL"
+    }
+  ],
+  "chamber": [
+    {
+      "name": "金牌猎头",
+      "description": "切出专属重型手枪，副开火可以开镜精确瞄准。子弹需要单独购买，经济局可用它守一条中远距离枪线，尽量逐发瞄准。",
+      "english": "HEADHUNTER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/745571f61d83d880c42278a35a072cdd8b7bfa12.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "闪转自如",
+      "description": "在安全位置布置传送锚，留在有效范围内时可再次激活，瞬间回到锚点。先确认落点有掩体，再前压架枪，开枪后撤回。",
+      "english": "RENDEZVOUS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/6d191f3734a8170d99f66642041da9f33240d319.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "贵宾限行",
+      "description": "布置会侦测敌人的陷阱，触发后在周围生成减速区域。把它藏在敌人转弯后才看得到的位置，听到触发声就留意绕后。",
+      "english": "TRADEMARK",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/245fa173c5d3677e3838d52fb155b6366d19c91b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "孤高火力",
+      "description": "召出专属狙击枪，击杀位置会留下减速区，妨碍紧跟其后的对手。守狭窄出口时，第一枪的落点也会影响第二名敌人的移动。",
+      "english": "TOUR DE FORCE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/49f14376a65d54586c350e7fe863ba30911032a0.mp4?accountingTag=VAL"
+    }
+  ],
+  "clove": [
+    {
+      "name": "整蛊",
+      "description": "投出碎片，短暂延迟后令范围内目标的生命值暂时衰减。把碎片送进队友即将清理的角落，在衰减消退前接枪线。",
+      "english": "Meddle",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/71b28c3a8e3b6f29a2523f2cada52f2ea5a1eab0.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "霞染",
+      "description": "从战术视图标出位置并确认，让烟云落下遮挡视线。暮蝶阵亡后仍可在允许范围内补烟，所以倒下后也要观察队友准备推进的位置。",
+      "english": "Ruse",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/f74f0d7b96cae0bcf51e97ad99883a370508a381.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "虹吸",
+      "description": "对自己参与伤害或击杀的倒地敌人使用，短时间获得额外生命与移动加速。可以利用这段时间换位或接第二次交火。",
+      "english": "Pick-Me-Up",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/4adb022f083d3887f73d23f60de71cccb45e6d83.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "化蝶",
+      "description": "阵亡后主动启动可重新起身，但必须在限定时间内击杀或取得伤害助攻才能存活。起身前先确认队友能否一起接战。",
+      "english": "Not Dead Yet",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b9e4ee59e2e2a492ec5a76f71c2161faa6f03981.mp4?accountingTag=VAL"
+    }
+  ],
+  "cypher": [
+    {
+      "name": "赛博囚笼",
+      "description": "先投出装置，在需要时远程开启遮挡视线的区域。把它放在绊线附近，等对手触发陷阱后开启，可以掩护自己换位或射击。",
+      "english": "CYBER CAGE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/54a8dfaa9b82c7aaf994b0432bb25ef1e95c985c.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "战术监控",
+      "description": "将摄像头固定在表面，切入镜头观察，还能向目标发射追踪镖。操作镜头时本体停在原地，先在掩体后站稳再收集信息。",
+      "english": "SPYCAM",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/825ba0643c74ad583350d1eb562bb7650ad78ae0.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "震慑绊线",
+      "description": "在两侧表面之间架设隐蔽绊线，敌人碰线会被牵制并暴露位置。注意调整高度和角度，让对手难以蹲过或跳过。",
+      "english": "TRAPWIRE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/aab21b75eb43f0e8cc9c0b816cb4877ae868b9fd.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "神经取析",
+      "description": "对倒地敌人使用，读取仍然存活的对手位置。先确认哪里出现了敌人，再决定守点或转点，扫描之后的位置还会变化。",
+      "english": "NEURAL THEFT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ddeaad5ff2e4865351755b71fdc4fc97339fb334.mp4?accountingTag=VAL"
+    }
+  ],
+  "deadlock": [
+    {
+      "name": "声感陷阱",
+      "description": "把感应器装在敌人可能制造脚步、枪声或落地声的位置。侦测到明显声音后，它会震荡附近区域，适合布在必须快速通过的落点。",
+      "english": "SONIC SENSOR",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/e2c77e5b49fc3b53a7c625eb7646e51e7094dc52.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "阻域屏障",
+      "description": "圆盘落地后向外展开屏障，限制人物通行。屏障两侧仍可交火，封住入口后要继续架枪，防止敌人隔着屏障射击。",
+      "english": "BARRIER MESH",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a9dc93d62c1ae6c51b12ed1e84a5d96c678677f9.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "重力捕网",
+      "description": "高抛或低抛网状装置，命中的敌人会被迫蹲下并减速。等敌人忙着脱网时衔接爆炸物，或从另一侧拉出枪线。",
+      "english": "GRAVNET",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d7576f43161214699762f1858e2fc8e2d3112077.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "断魂索道",
+      "description": "纳米线束会裹住最先命中的敌人，并将其拖向终点。敌方能击破茧救人，释放后应架住营救者开火时会暴露的位置。",
+      "english": "ANNIHILATION",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b995bab386bd58541eacfe0e065a808081c0b9ea.mp4?accountingTag=VAL"
+    }
+  ],
+  "fade": [
+    {
+      "name": "幽爪",
+      "description": "投出会落地展开的梦魇球，也能再次激活使它提前落下。被范围捕获的敌人会受到牵制，适合配合队友的范围伤害清理死角。",
+      "english": "SEIZE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ed5b27f8f8acf6420d5f0e30938e963a204cfeca.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "诡眼",
+      "description": "把侦察体投到能俯视掩体的位置，落下后会暴露视野内的敌人并留下追踪痕迹。尽量让它越过箱沿，避免视线被挡。",
+      "english": "HAUNT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/2ee3d74b1105ab3cd996821fb07e4d6aa5c77c1a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "黯兽",
+      "description": "释放向前搜索的黯兽，可引导它绕角，也可让它沿魇迹追击。命中后会限制敌人视野，队友应跟在后面争取交火时机。",
+      "english": "PROWLER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d401c0074081fd609fa08710174f27fc216c5b92.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "夜临",
+      "description": "释放能穿过墙体的大片梦魇波，让命中的敌人留下魇迹并受到耳聋和衰减影响。确认波及方向后，派出黯兽继续追踪。",
+      "english": "NIGHTFALL",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/fd638db2f5041f8bc09f311af2c460cec579edcd.mp4?accountingTag=VAL"
+    }
+  ],
+  "gekko": [
+    {
+      "name": "顽皮搭档",
+      "description": "派出搭档搜敌并震荡目标。瞄准包点或爆能器使用副开火，还可指挥它安装或拆除。下达指令后，要替它守住行进路线。",
+      "english": "WINGMAN",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/e9a92a506942c735f5a986ee9489fad34b192843.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "炫晕光波",
+      "description": "向空中投出伙伴，它会朝视野内的敌人发射电浆，短暂遮住对方视线。利用它升空的高度越过掩体，并留意电浆飞向哪里。",
+      "english": "DIZZY",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/f3a565e0cde441f1754eeadda2427020a795d4a0.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "嗨爆全场",
+      "description": "像手雷一样投出莫什，落地后扩散并在短暂延迟后爆开。可以把它丢到掩体背面，再瞄准对手躲避爆炸时会经过的位置。",
+      "english": "MOSH PIT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/85f2c3958091bf4b8fb475c8bda0dcb10a409fbc.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "无敌超鲨",
+      "description": "接管伙伴视角，绕过转角后向目标扑击，拘束爆炸范围内的敌人。控制期间本体需要掩护，提前喊队友跟进收下被拘束的目标。",
+      "english": "THRASH",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/fe30846150b8f87f7f945a3f0c82e59d0522dbdc.mp4?accountingTag=VAL"
+    }
+  ],
+  "harbor": [
+    {
+      "name": "狂潮",
+      "description": "沿地面放出水墙，按住开火可随准星弯折路径，用副开火提前截断。水墙遮挡视线并减速穿越者，可以绕着包点切开远处枪线。",
+      "english": "HIGH TIDE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "乱涌",
+      "description": "把水涡投向目标位置，短暂延迟后对范围内的敌人造成近视与减速。先封住对手容易撤出的方向，再借它推进近距离掩体。",
+      "english": "STORM SURGE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/e8a2822075831bdda3b1a121a569c61cb865eb59.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "海盾",
+      "description": "选择落点形成水烟，再次激活可给水烟加上能挡子弹的护盾。护盾可以被击破，安拆包时仍需队友看住从烟里冲出来的人。",
+      "english": "COVE (COVE SMOKE)",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/ba5abcf93cae8d9dfacaac56862dd400407d416e.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "怒涛",
+      "description": "朝选定方向释放向前翻涌的水浪，命中的敌人会近视并减速。让队友从侧面跟进，利用对手暂时看不远的窗口取得空间。",
+      "english": "RECKONING",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/820946b15b9a68ca46270d44363574dc634b8c1f.mp4?accountingTag=VAL"
+    }
+  ],
+  "iso": [
+    {
+      "name": "稳态剥离",
+      "description": "发射可穿过墙体的能量弹，接触到的玩家会暂时易伤。先确认队友的位置，从侧面穿过对手惯用的掩体，配合队友枪线补伤害。",
+      "english": "UNDERCUT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/17503f71b58f654d583a66e29dab75460677576f.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "战斗心流",
+      "description": "进入专注状态后，参与击倒敌人会生成能量球。击碎能量球可获得抵消一次伤害的护盾，转火能量球前要先看清第二名敌人的位置。",
+      "english": "DOUBLE TAP",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/11ad2731215ec978c89fdb675aaf3b591c3c3c55.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "绝对屏障",
+      "description": "向前推出一道能挡子弹的移动屏障。紧跟屏障可以安全一些地穿越正面的长枪线，但侧面仍然暴露，需要队友一起清角。",
+      "english": "CONTINGENCY",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/5e331c774ffde4e8e0c45a8844b0237b7d75ba3b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "决斗通牒",
+      "description": "向前放出能量，将最先命中的敌人和自己带入独立竞技场决斗。选择目标前先找好本体位置，并让队友掩护返回的地点。",
+      "english": "KILL CONTRACT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/6fbd2b0e16ac3bda095094770ce6b1d403fc3832.mp4?accountingTag=VAL"
+    }
+  ],
+  "jett": [
+    {
+      "name": "凌空",
+      "description": "立即借风升高，越过箱体或登上高台。改变高度能打乱敌人的预瞄，但在空中很容易被看见，先想好落点再起跳。",
+      "english": "UPDRAFT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/4cbc968f05713579aae9464c5a16dc3f6863f943.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "逐风",
+      "description": "先激活并进入待冲刺状态，再次按下时沿移动方向冲出。架狙时可预备侧向退回掩体，进点时也可借烟幕遮住落点。",
+      "english": "TAILWIND",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "瞬云",
+      "description": "投出遇到表面就展开的短时烟雾，按住技能键可随准星引导弹道。把烟放在冲刺终点，可以先隔开远处枪线再清近角。",
+      "english": "CLOUDBURST",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3353597819f0c032d56ff947d9762368b4ee6c6b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "飓刃",
+      "description": "装备精准飞刀，主开火逐把投掷，副开火能一次掷出剩余飞刀。中远距离应优先逐把瞄准，近身时再考虑集中爆发。",
+      "english": "BLADE STORM",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/667770571300e065b332617e5c8f2e009ed88928.mp4?accountingTag=VAL"
+    }
+  ],
+  "kay-o": [
+    {
+      "name": "闪存过载",
+      "description": "主开火高抛闪光弹，副开火近距离低抛，引爆时机也不同。绕角前让队友背对闪光，等爆开后同时拉出。",
+      "english": "FLASH/DRIVE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/9ad839fef2fd8d16d9608f8a6efd709091f0b74a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "零点嗅探",
+      "description": "把压制匕首投到墙或掩体上，短暂蓄能后压制附近敌人的技能。命中反馈能帮助判断点内守军，但匕首也可能被提前打掉。",
+      "english": "ZERO/POINT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/dbccb81297a30a9ddc92ec1883c832298f014504.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "碎片溢出",
+      "description": "碎片落地后连续爆炸，靠近中心受到的伤害更高。用它封住狭窄通路，或掷到敌人必须停留的位置逼其离开。",
+      "english": "FRAG/MENT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/292e5319f9cd0aa7eee01af47413f4009236f87e.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "无效命令",
+      "description": "激活后自身持续发出压制脉冲，让附近敌人暂时失去技能。期间倒地时队友有机会将你重启，突入前要留下队友可到达的救援位置。",
+      "english": "NULL/CMD",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d9e35cc5d68e533df2d6e15a93471a5c073b0471.mp4?accountingTag=VAL"
+    }
+  ],
+  "killjoy": [
+    {
+      "name": "自动哨兵",
+      "description": "部署隐蔽机器人，敌人靠近时它会追击并引爆，使目标易伤。把纳米蜂群放在附近，听到触发声后再启动，两者更容易命中同一人。",
+      "english": "ALARMBOT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/0582e7e1a0733667614492129abef67e17cfc92c.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "哨戒炮台",
+      "description": "放置炮台监视正面扇形区域，发现目标后自动射击。可以让炮台先接触敌人，自己从另一条枪线利用其开火提示补枪。",
+      "english": "TURRET",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/007e5042385d6f7315f4b4cb3fbd3b2c71b530c1.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "纳米蜂群",
+      "description": "将装置投到地面，落地后隐蔽，直到你主动激活才释放伤害区域。提前布在包点或窄口，等敌人停步时启动。",
+      "english": "NANOSWARM",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b47a0b24d2499935d28f845a067984a52dbc2542.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "全面封锁",
+      "description": "放下装置并等待充能，完成后拘束范围内的敌人。敌方可破坏装置，隔墙布置并守住接近路线，能让队友更从容地推进。",
+      "english": "LOCKDOWN",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/9485f7bbf04841f4c37e031f07dad03e9cbc1bf9.mp4?accountingTag=VAL"
+    }
+  ],
+  "miks": [
+    {
+      "name": "共振谐律",
+      "description": "瞄准队友释放，自己和对方一同获得战斗强化，击杀可以刷新效果。副开火可只强化自己，双人突破时优先给第一个接敌的队友。",
+      "english": "HARMONIZE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/7fe1ccd5f450d0e4734c4452cedca5bf6fa818fc.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "声波帷幕",
+      "description": "在战术地图上标记烟幕的位置，再确认投放。进点前先观察队友走哪条路线，把烟布在敌方远点和队友之间。",
+      "english": "WAVEFORM",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/aba82134b8cf0f62eb0ba80daa9b6d86380e2348.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "电音脉冲",
+      "description": "投出前可切换震荡或治疗模式，装置落地后发出一阵阵声波。清掩体用震荡，队友退到安全位置后再用治疗模式支援。",
+      "english": "M-pulse",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/71696d85f7392dc2dbbefbf7d6d53b478dd50d1e.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "音脉强袭",
+      "description": "朝前方释放强音，击退命中的玩家，同时造成耳聋和减速。若要阻止拆包，可从侧面释放，让击退方向把对手推出包点。",
+      "english": "BASSQUAKE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/460f601d6928013be29591766945f2d6bd4759e2.mp4?accountingTag=VAL"
+    }
+  ],
+  "neon": [
+    {
+      "name": "闪电弹球",
+      "description": "电能弹可反弹一次，每次接触表面都会在下方形成震荡区。利用反弹处理同一路线的两个角落，再让队友跟上清点。",
+      "english": "RELAY BOLT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/db28dddd3cf49297ca4c10c1898e4d3702af9d6f.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "充能疾驰",
+      "description": "开启后消耗能量高速跑动，有滑铲可用时按副开火滑出。长距离转点靠疾跑，靠近枪线前先决定滑向哪块掩体。",
+      "english": "HIGH GEAR",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a1c82c1a3aa3676bbff05dae9af8fdd8f2f25fb7.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "高速通道",
+      "description": "沿地面向前发出两道能量墙，在中间形成遮挡两侧视线的通道。前方出口仍可能有人架枪，冲进去前先让队友侦察出口。",
+      "english": "FAST LANE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/c1ba9d2ec4c567f6b27ddeab512ed245d5706e6b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "超限暴走",
+      "description": "进入强化状态并获得高速移动能力，按住开火向准星方向释放精准电流。保持移动时要持续跟枪，避免一味加速丢失目标。",
+      "english": "OVERDRIVE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/917de7be4f9bad96b54f47a4de6f91c323a57a6a.mp4?accountingTag=VAL"
+    }
+  ],
+  "omen": [
+    {
+      "name": "暗魇",
+      "description": "送出一团可穿墙的暗影，命中的玩家会暂时看不远。先看队友站位，沿队友进攻方向的侧面释放，减少误伤队友的可能。",
+      "english": "PARANOIA",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/f401fc788f3182b6d5aa25af6056c842117b1b36.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "黑瘴",
+      "description": "在技能视图中调整烟球的距离和高度，确认后遮挡落点视线。烟底要贴合地面，避免留下能让远处敌人看见脚部的缝隙。",
+      "english": "DARK COVER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ba0b035a5ff2bb8d9487ba461b3d15900ff50f6b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "践影",
+      "description": "选择范围内落点，短暂引导后传送过去。用烟或掩体遮住起点和终点，能换到箱顶或越过枪线，避免传送时被直接看见。",
+      "english": "SHROUDED STEP",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/33550fee410c5a55ea8832f41827a12aaddb686f.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "离魂",
+      "description": "在战术地图上选择位置进行远距离传送。抵达前的暗影可以被打断，也可主动取消，观察到敌人守着落点时及时放弃。",
+      "english": "FROM THE SHADOWS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/252cf8ad86b6aca6210ba93ea856f52708476eba.mp4?accountingTag=VAL"
+    }
+  ],
+  "phoenix": [
+    {
+      "name": "闪光曲球",
+      "description": "投出绕弯的闪光球，两种开火方式分别控制左右弧线。贴着拐角选择方向，让球刚绕过墙面就爆开，随后再探头。",
+      "english": "CURVEBALL",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/c62125b1b5637b7b0e0881348502f7e8b8e93572.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "火热手感",
+      "description": "抛出火球，落地形成持续火区，对敌人造成伤害，也能用自己的火恢复生命。可以封住追击路线，给自己留出恢复时间。",
+      "english": "HOT HANDS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "火冒三丈",
+      "description": "向前拉出遮挡视线的火墙，按住开火可引导墙体转弯。用它把同一包点分成两块，再集中清理靠近队友的一侧。",
+      "english": "BLAZE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/8c5b0e23be0814583ad4601b4297d04dbaff79f7.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "再火一回",
+      "description": "在当前位置留下标记，期间被击倒或时间结束都会回到标记处。开启前挑选有掩护的起点，防止敌人守在回归位置。",
+      "english": "RUN IT BACK",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/aa122a33b1ef0320174991b8ddee4e82dbc2b937.mp4?accountingTag=VAL"
+    }
+  ],
+  "raze": [
+    {
+      "name": "惊喜翻腾",
+      "description": "丢出黏附表面的炸药包，再次激活时引爆产生推力。将它放在脚边或墙侧能改变自己的移动方向，提前瞄好下一处落点。",
+      "english": "BLAST PACK",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82028c5e9ae38b59660dbf9f57f341f1c20c5480.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "彩雷飞溅",
+      "description": "母弹爆炸后还会散出多枚子弹药，继续覆盖周围区域。投进狭窄拐角能逼人移动，队友可瞄准对手逃离爆炸范围的出口。",
+      "english": "PAINT SHELLS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d75fd65435a84906bb3e8ad0b97c505e7359697b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "花车巡游",
+      "description": "放出沿地面前进、遇墙反弹的机器人，锁定前方敌人后会追击爆炸。让它先绕过转角，再根据追击声或敌方枪声决定是否跟进。",
+      "english": "BOOM BOT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/c824fe8e08a4f36be2273aa456819d2c2b6cd6b0.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "晚安焰火",
+      "description": "装备火箭发射器，火箭撞上表面就造成范围伤害。瞄准敌人脚下或掩体侧面，比追着移动中的人影发射更容易覆盖目标。",
+      "english": "SHOWSTOPPER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/7281a34566f12d202dee3d43e0fa0bf0b4271d60.mp4?accountingTag=VAL"
+    }
+  ],
+  "reyna": [
+    {
+      "name": "噬尽",
+      "description": "敌人留下魂珠后，及时吸取可恢复生命。交火结束先确认周围还有没有第二名敌人，再决定留下回血还是用魂珠脱离。",
+      "english": "DEVOUR",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/327ccef09ef3c84a92320593c5db1bcb4b37e1e7.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "逐散",
+      "description": "消耗附近魂珠进入短暂的无实体状态，此时可安全移动但无法正常开枪。优先退到掩体后再结束状态，避免在敌人面前恢复实体。",
+      "english": "DISMISS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/6a7db5a37dd8e6e6671699ff30ad297cf1f2eeda.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "睥睨",
+      "description": "向前投出可被击毁的眼球，使看见它的敌人暂时近视。把眼球放在高处或侧面，让对手必须在瞄你和转枪打眼之间选择。",
+      "english": "LEER",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/01030fba2df618b91c6185bb076f54e8c6c40415.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "女皇旨令",
+      "description": "激活后提升射击和武器操作速度，击杀可延续强化状态，并强化魂珠技能。适合连续接战，但每次击倒后仍要重新确认下一条枪线。",
+      "english": "EMPRESS",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d777e81e035db1430b1fbf664a432163deed5afb.mp4?accountingTag=VAL"
+    }
+  ],
+  "sage": [
+    {
+      "name": "薄冰",
+      "description": "投出减速球，落地后在一片区域留下减速地面。落在窄口能拖慢多人推进，听到脚步后投掷比回合开始就用更容易留住目标。",
+      "english": "SLOW ORB",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/45053483528b96cbe003ac39e6b53c9866d5fea6.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "逢春",
+      "description": "准星对准受伤队友可为其持续恢复生命，副开火则给自己治疗。优先在掩体后使用，并留意队友是否即将再次接战。",
+      "english": "HEALING ORB",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a247d196383136d3de15b4d6d9c816e3c8054ba0.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "玉城",
+      "description": "选择墙体朝向后竖起实体屏障，可以隔断通道或垫高站位。封口时注意墙和门框之间的缝隙，听到破墙声就准备补防。",
+      "english": "BARRIER ORB",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "再起",
+      "description": "瞄准倒下的队友启动复活，短暂引导后队友重新加入回合。先隔断敌方视线，或让另一名队友掩护复活动画期间的枪线。",
+      "english": "RESURRECTION",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/df83929ed5da349c37a5bf4600c2b55010c72402.mp4?accountingTag=VAL"
+    }
+  ],
+  "skye": [
+    {
+      "name": "辟林之虎",
+      "description": "放出并控制侦察兽，从低处绕角搜索敌人，扑击能震荡目标。操控时本体停在原处，队友跟在侦察兽后面才能及时补枪。",
+      "english": "Trailblazer",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "引路之隼",
+      "description": "放出飞鹰并引导方向，再次激活时产生闪光。可绕过墙角后才引爆，并通过命中反馈判断附近是否有人。",
+      "english": "Guiding Light",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/64edfd7af8a7125dd9c981c52fdc60f9560b821b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "愈生之息",
+      "description": "持续引导，为范围和视野内的受伤队友恢复生命。治疗资源需要分配，等多人回到掩体附近一起治疗可以提高利用率。",
+      "english": "Regrowth",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/d64273e31bf2c4d16c52acc2f461e9accdb7c7f9.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "追猎之灵",
+      "description": "释放追踪体寻找最近的敌人，追上后会限制对方视野。观察它们分别走向哪里，即使追踪体被击毁也能帮助队伍选择路线。",
+      "english": "Seekers",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL"
+    }
+  ],
+  "sova": [
+    {
+      "name": "雷击箭",
+      "description": "拉弓蓄力调整射程，用副开火设置反弹次数，箭矢撞击后造成范围伤害。借墙弹进无法直视的角落，可以逼走贴墙防守者。",
+      "english": "SHOCK BOLT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/7776fa677e90c72da94ec7d188d2d4618116c41b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "寻敌箭",
+      "description": "箭矢附着后发出扫描脉冲，暴露视野内的敌人，对手也能将它击毁。尽量选择能看到掩体侧面的落点，避免把箭射进死角。",
+      "english": "RECON BOLT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/50f9d870fa2a9b9ba38408eb718ffc06879c11a8.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "枭型无人机",
+      "description": "远程驾驶无人机探路，发现目标后发射追踪镖标记敌人。让队友跟随机身推进，可以利用敌人抬枪打无人机的瞬间接战。",
+      "english": "OWL DRONE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/6c6f036376c18ddf4ed0c589b506b8889d86a29a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "狂猎之怒",
+      "description": "可连续发射穿透墙体的远距离能量束，命中会造成伤害并暴露目标。第一束打到人后，按位置反馈修正后续射击方向。",
+      "english": "HUNTER'S FURY",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/df9ce34c3d2a7f527929cac123501e1473e0da0e.mp4?accountingTag=VAL"
+    }
+  ],
+  "tejo": [
+    {
+      "name": "潜袭爬虫",
+      "description": "放出并操控隐蔽无人机，靠近目标后触发脉冲，暴露并压制命中的敌人。启动前先找掩体，避免本体在操控时被绕后。",
+      "english": "Stealth Drone",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/68c56e770855ce32eab9ba4283e4496952295d9a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "特快专递",
+      "description": "投出黏性榴弹，附着表面后爆开并震荡附近目标。副开火可让它先反弹一次，适合处理门框后无法直接瞄准的位置。",
+      "english": "Special Delivery",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/6fdd2855da57354f3f1d274bea06f8f24140ef23.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "精准投放",
+      "description": "在战术图上选择打击位置并确认，导弹会自行飞往标记点后引爆。提前预判敌人的停留位置，用队友的压制火力限制其撤离。",
+      "english": "Guided Salvo",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/612a857ad0b5ebfa86611af953066356cd33fe97.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "末日审判",
+      "description": "依次选择轰炸起点和终点，爆炸沿这条路线推进。把路径铺在敌人常用的退路上，让队友架住轰炸范围两侧的出口。",
+      "english": "Armageddon",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/8060ca420965ebd775f8cdbe3589600ee5733911.mp4?accountingTag=VAL"
+    }
+  ],
+  "veto": [
+    {
+      "name": "裂变残片",
+      "description": "投出落地展开的陷阱，捕获目标后会将其固定，并施加耳聋和生命衰减。敌人能提前拆掉装置，把它藏在必经转角后更难被发现。",
+      "english": "CHOKEHOLD",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/c20ef1ed8b1ac66589d7be8ce91eb8d238add412.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "涡流折跃",
+      "description": "在地面留下涡流，在有效距离内看向它并再次激活即可传送回去。先在掩体后设置退路，探点时注意保持能看向涡流的角度。",
+      "english": "CROSSCUT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/120c1d637aadbeb6995ca80f5819bf9647b9056c.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "噬源体",
+      "description": "放置拦截器，再次激活后可清除特定的敌方投掷物和可摧毁装置。它本身也能被击破，布置时尽量避开入口的直接枪线。",
+      "english": "INTERCEPTOR",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/e1e6a22165aecb88f0bb8527cfee9e16c6bdc788.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "完全进化",
+      "description": "主动变异后获得战斗强化、生命恢复和对负面状态的免疫。可以借此穿越控制区域，但子弹仍会造成伤害，需要队友配合拉枪线。",
+      "english": "EVOLUTION",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/4aafeeffca726a0bfdd0852c0543583dc43da41b.mp4?accountingTag=VAL"
+    }
+  ],
+  "viper": [
+    {
+      "name": "瘴云",
+      "description": "投出气体装置，启用后以燃料维持毒烟，遮挡经过该处的视线。交火前再开启，需要再次封烟时要预留足够燃料。",
+      "english": "POISON CLOUD",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/49ff8efd75b76941da3018362061275d3a1d43d6.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "毒幕",
+      "description": "沿选定方向布置一列发射器，可反复升起长条毒墙切开视野。提前规划墙线能一次封住多个角度，收墙前要告知正在过点的队友。",
+      "english": "TOXIC SCREEN",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/36db8f44946850c2a20aba43d8ad3ecd977c7d7e.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "蛇吻",
+      "description": "发射落地破碎的化学弹，地面酸液造成持续伤害并施加易伤。它能逼退藏在角落的敌人，也适合与队友的伤害技能同时使用。",
+      "english": "SNAKE BITE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/9eeb3090efed080792e6ea2f264fd60ebb12694e.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "蝰腹",
+      "description": "释放大范围毒雾，限制视野并削弱进入区域的敌人。围绕包点布置后，靠声音和近距离枪线防守，并与队友说清进出方向。",
+      "english": "VIPER'S PIT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/4601fd972c588a79cdd910b2497546f156886c40.mp4?accountingTag=VAL"
+    }
+  ],
+  "vyse": [
+    {
+      "name": "裁断",
+      "description": "在通道处设置隐蔽墙体陷阱，敌人经过后，金属墙会从其身后升起。等第一个敌人和后续队友被分开时再集中火力。",
+      "english": "Shear",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/bacb07fdf5b13efeab5e24168f8e244257c1d0cb.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "弧光玫瑰",
+      "description": "将玫瑰藏在表面，也能通过墙面布到另一侧，再远程触发闪光。先记住花朝向哪条枪线，避免进点队友正对它。",
+      "english": "Arc Rose",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/5cefca2b93f097285ce2cb4f20fec7184b555218.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "剃刀藤蔓",
+      "description": "投出落地后隐藏的金属藤巢，主动引爆后展开荆棘，让穿行者减速并因移动受伤。可等敌人跨过入口后再激活，限制退路。",
+      "english": "Razorvine",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/84154b3401b08acad60d739616017a4fcd86710a.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "铁棘禁园",
+      "description": "向周围释放金属荆棘，短暂延迟后使范围内敌人的主武器失灵。抓住对手切副武器的时间推进，仍需防备手枪火力。",
+      "english": "Steel Garden",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/f9d32afb39a3260b915ea6ef441054c904a69e91.mp4?accountingTag=VAL"
+    }
+  ],
+  "waylay": [
+    {
+      "name": "光棱闪爆",
+      "description": "投出光团，触地后使附近玩家移动与武器操作变慢。把它送到拐角另一侧，队友可趁守点者转枪变慢时清理近点。",
+      "english": "Saturate",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/705b3917c26e9e97c5343d57875cd3404537190b.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "光速飞跃",
+      "description": "准备后可以连续两次突进，也可用副开火只突进一次。只有第一段能向上，先越过箱体，再用第二段调整落点。",
+      "english": "Lightspeed",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/e06f520d0e844b3c136623c2568137ac47bc54ff.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "溯流回光",
+      "description": "在安全地面留下光标，再次启动时以光的形式返回标记，返回途中处于无敌状态。前压前先放标记，撤回后再重新找枪线。",
+      "english": "Refract",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/189ff46acf7dd27b245631af9a6c51ef95013bb7.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "时光修罗场",
+      "description": "向前投射残影与光束，短暂延迟后光束扩张，使命中区域内的其他玩家行动迟缓，同时强化自己的速度。沿光束边缘推进更容易抓住时机。",
+      "english": "Convergent Paths",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/b04a789382009e666cca021889586c6bc00bbaf5.mp4?accountingTag=VAL"
+    }
+  ],
+  "yoru": [
+    {
+      "name": "攻其不备",
+      "description": "投出不稳定碎片，撞到硬表面后弹出并产生闪光。借门框或侧墙控制弹出角度，让闪光进入敌方视野后自己再出枪。",
+      "english": "BLINDSIDE",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/295ab26ef6097d28da0bef9c9b4c6185a80071c8.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "不请自来",
+      "description": "布置静止或前行的传送信标，再次激活可传送过去，也可以制造假传送。先确认信标终点安全，用真假声音干扰对手判断。",
+      "english": "GATECRASH",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/be352287c5704d82d1acbff5ecdee5187755d235.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "出其不意",
+      "description": "释放向前行走的分身，分身被敌人射击后会转向攻击者并闪光。让分身先走出常见架枪位，自己从另一个角度跟进。",
+      "english": "FAKEOUT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL"
+    },
+    {
+      "name": "神鬼不觉",
+      "description": "戴上面具进入异空间，穿行并观察敌方布防，持续期间难以被直接攻击。解除前先退到安全掩体，避免现身动作暴露在枪口下。",
+      "english": "DIMENSIONAL DRIFT",
+      "clip": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/9ca7fac6ec9514fa06b9785aad2ead0c3fba0eec.mp4?accountingTag=VAL"
+    }
+  ]
+}

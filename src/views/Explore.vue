@@ -6,6 +6,7 @@ import { useCatalog } from "../stores/catalog";
 import { filterPlayers, number, catalogRows } from "../lib/domain";
 import PageHeading from "../components/PageHeading.vue";
 import PlayerCard from "../components/PlayerCard.vue";
+import AgentPortrait from "../components/AgentPortrait.vue";
 const s = useCatalog(),
   route = useRoute(),
   router = useRouter();
@@ -185,13 +186,13 @@ watch([q, region, role, year, level], () => (page.value = 1));
           v-else
           :to="`/detail/${kind}/${item[kind + '_id']}`"
           class="directory-card"
-          ><div class="directory-card-top">
+          :class="{ 'agent-card': kind === 'agent' }"
+          ><AgentPortrait v-if="kind === 'agent'" :agent="item" />
+          <div v-else class="directory-card-top">
             <span class="tile-symbol" :class="kind">{{
               kind === "team"
                 ? item.team_tag
-                : kind === "agent"
-                  ? item.agent_name.slice(0, 2)
-                  : item.tournament_year
+                : item.tournament_year
             }}</span
             ><ArrowUpRight :size="20" />
           </div>

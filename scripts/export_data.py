@@ -32,6 +32,11 @@ for name in allowed:
         rows.extend(dict(zip(columns,row,strict=True)) for row in tuples(insert.group(1)))
     data[name]=rows
 out=Path(__file__).resolve().parents[1]/'supabase/catalog.seed.json'
+guides=json.loads(out.with_name('agent-guides.json').read_text(encoding='utf8'))
+for agent in data['agent']:
+    slug=agent['agent_name'].lower().replace('/','-')
+    if slug in guides:
+        agent['abilities']=guides[slug]
 out.parent.mkdir(parents=True,exist_ok=True)
 out.write_text(json.dumps(data,ensure_ascii=False,separators=(',',':')),encoding='utf8')
 print({name:len(rows) for name,rows in data.items()})

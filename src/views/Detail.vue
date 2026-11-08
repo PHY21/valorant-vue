@@ -5,6 +5,8 @@ import { ArrowLeft, Heart, GitCompareArrows } from "lucide-vue-next";
 import { useCatalog } from "../stores/catalog";
 import { compareStats, number, catalogRows } from "../lib/domain";
 import Portrait from "../components/Portrait.vue";
+import AgentPortrait from "../components/AgentPortrait.vue";
+import AgentGuide from "../components/AgentGuide.vue";
 import PlayerCard from "../components/PlayerCard.vue";
 import Comments from "../components/Comments.vue";
 const s = useCatalog(),
@@ -47,9 +49,10 @@ const target = computed(() => `${kind.value}:${id.value}`);
   ><template v-if="item"
     ><section class="detail-hero">
       <Portrait v-if="kind === 'player'" :player="item" />
+      <AgentPortrait v-else-if="kind === 'agent'" :agent="item" />
       <div v-else class="detail-symbol">
         {{
-          item.team_tag || item.agent_name?.slice(0, 2) || item.tournament_year
+          item.team_tag || item.tournament_year
         }}
       </div>
       <div>
@@ -107,15 +110,13 @@ const target = computed(() => `${kind.value}:${id.value}`);
         {{ item.bio || item.description || "当前数据集中尚未收录详细介绍。" }}
       </p>
       <p v-if="item.honors" class="preserve-lines">{{ item.honors }}</p>
-      <p v-if="kind === 'agent' && item.skills" class="preserve-lines">
-        {{ item.skills }}
-      </p>
       <p v-if="kind === 'tournament'">
         收录奖金池：{{
           item.prize_pool == null ? "未收录" : "$" + number(item.prize_pool)
         }}
       </p>
     </section>
+    <AgentGuide v-if="kind === 'agent'" :key="id" :agent="item" />
     <section v-if="kind === 'team'" class="section">
       <div class="section-heading">
         <h2>

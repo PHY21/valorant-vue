@@ -851,6 +851,10 @@ strong {
   transform: translateY(-3px);
   border-color: #bdc4ae;
 }
+.agent-card { overflow: hidden; }
+.agent-card > .agent-portrait { height: 175px; margin: -23px -23px 18px; }
+.agent-card > .agent-portrait img { object-fit: cover; object-position: 50% 12%; }
+.detail-hero > .agent-portrait { width: clamp(120px, 25vw, 210px); aspect-ratio: 3/4; border-radius: 5px; }
 .directory-card-top {
   display: flex;
   justify-content: space-between;
